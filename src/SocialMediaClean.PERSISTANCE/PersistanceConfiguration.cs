@@ -11,6 +11,7 @@ namespace SocialMediaClean.PERSISTANCE
         {
             services.AddSingleton<IDbConnectionFactory, DbConnectionFactory>();
             services.AddScoped<IAuthRepository, AuthRepository>();
+            services.AddScoped<IAccountRepository, AccountRepository>();
             return services;
         }
     }

@@ -1,8 +1,7 @@
 ﻿namespace SocialMediaClean.APPLICATION.Response
 {
-    public class RegisterResponse : Response
+    public class RegisterResponse : BaseResponse
     {
-        public string Message { get; set; }
-        public bool Succes { get; set; } = false;
+        
     }
 }

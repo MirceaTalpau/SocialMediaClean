@@ -6,6 +6,8 @@ using SocialMediaClean.APPLICATION.Requests;
 using SocialMediaClean.APPLICATION.Response;
 using SocialMediaClean.APPLICATION.Validators;
 using SocialMediaClean.DOMAIN.Models.DTOs;
+using SocialMediaClean.INFRASTRUCTURE.Interfaces;
+using SocialMediaClean.INFRASTRUCTURE.Models;
 using SocialMediaClean.PERSISTANCE.Interfaces;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -21,17 +23,19 @@ namespace SocialMediaClean.APPLICATION.Services
         private readonly IAuthRepository _authRepository;
         private readonly IMapper _mapper;
         private readonly IConfiguration _config;
+        private readonly IMailService _mailService;
         const int keySize = 64;
         const int iterations = 350000;
         HashAlgorithmName hashAlgorithm = HashAlgorithmName.SHA512;
 
-        public AuthService(IAuthRepository authRepository,IMapper mapper, IConfiguration config)
+        public AuthService(IAuthRepository authRepository,IMapper mapper, IConfiguration config,IMailService mailService)
         {
             _registerValidator = new RegisterRequestValidator();
             _loginValidator = new LoginRequestValidator();
             _authRepository = authRepository;
             _mapper = mapper;
             _config = config;
+            _mailService = mailService;
 
         }
 
@@ -45,7 +49,7 @@ namespace SocialMediaClean.APPLICATION.Services
                 {
                     response.ErrorMessages.Add(error.PropertyName, error.ErrorMessage);
                 }
-                response.Message = "Registration failed!";
+                response.Message = "Validation failed!";
                 return response;
             }
             var registerRequestDTO = new RegisterRequestDTO();
@@ -53,15 +57,24 @@ namespace SocialMediaClean.APPLICATION.Services
             var salt = RandomNumberGenerator.GetBytes(keySize);
             registerRequestDTO.Password = HashPasword(registerRequest.Password,salt);
             registerRequestDTO.PasswordSalt = Convert.ToHexString(salt);
-            var succes = await _authRepository.RegisterUserAsync(registerRequestDTO);
+            var confirmationToken = Guid.NewGuid().ToString();
+            var succes = await _authRepository.RegisterUserAsync(registerRequestDTO,confirmationToken);
             if (!succes)
             {
-                response.Message = "Registration failed!";
+                response.Message = "Registration failed! User already exists!";
                 response.ErrorMessages.Add("User Exists", "There is already an entry with that email or phone number!");
                 return response;
             }
+            var mail = new MailRequest
+            {
+                Receiver = registerRequest.Email,
+                Subject = "Email confirmation",
+                Body = $"Click <a href=\"https://localhost:4200/confirm/email/{registerRequest.Email}/{confirmationToken}\">here</a> to confirm your email."
+            };
+            await _mailService.SendEmailAsync(mail);
             response.Message = "Registration succesfully!";
-            response.Succes = true;
+            response.Code = 200;
+            response.Success = true;
             return response;
         }
 
@@ -73,8 +86,15 @@ namespace SocialMediaClean.APPLICATION.Services
             {
                 foreach (var error in validation.Errors)
                 {
+                    response.Message = "Validation failed!";
                     response.ErrorMessages.Add(error.PropertyName,error.ErrorMessage);
                 }
+                return response;
+            }
+            var verified = await _authRepository.IsEmailVerifiedAsync(loginRequest.Email);
+            if (!verified)
+            {
+                response.Message = "Email is not verified!";
                 return response;
             }
             var passwordAndSalt = await _authRepository.GetPasswordAndSaltAsync(loginRequest.Email);
@@ -84,10 +104,12 @@ namespace SocialMediaClean.APPLICATION.Services
             if (VerifyPassword(loginRequest.Password, passwordAndSalt.Password, salt))
             {
                 response.Token = GenerateToken(passwordAndSalt.ID);
+                response.Code = 200;
                 response.Success = true;
                 return response;
             }
             response.ErrorMessages.Add("Invalid", "User or password invalid!");
+            response.Message = "User or password invalid!";
             return response;
         }
 

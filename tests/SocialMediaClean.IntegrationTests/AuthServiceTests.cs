@@ -1,6 +1,8 @@
 using AutoFixture;
 using AutoMapper;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Shouldly;
 using SocialMediaClean.APPLICATION.Mapper;
 using SocialMediaClean.APPLICATION.Requests;
@@ -8,6 +10,7 @@ using SocialMediaClean.APPLICATION.Services;
 using SocialMediaClean.DOMAIN.Enums;
 using SocialMediaClean.INFRASTRUCTURE.Implementation;
 using SocialMediaClean.INFRASTRUCTURE.Interfaces;
+using SocialMediaClean.INFRASTRUCTURE.Settings;
 using SocialMediaClean.PERSISTANCE.Repositories;
 using System.Net.Mail;
 
@@ -21,6 +24,9 @@ namespace SocialMediaClean.IntegrationTests
         private readonly IFixture _fixture;
         private readonly AuthService _authService;
         private readonly IMapper _mapper;
+        private readonly MailService _mailService;
+        private IServiceProvider _serviceProvider;
+
 
 
         public AuthServiceTests()
@@ -33,7 +39,13 @@ namespace SocialMediaClean.IntegrationTests
                 cfg.AddProfile<MapperProfile>();
             });
             _mapper = mapperConfig.CreateMapper();
-            _authService = new AuthService(_auth, _mapper,_config);
+            var services = new ServiceCollection();
+            services.Configure<MailSettings>(_config.GetSection("MailSettings"));
+            _serviceProvider = services.BuildServiceProvider();
+            var mailSettingsOptions = _serviceProvider.GetRequiredService<IOptions<MailSettings>>();
+
+            _mailService = new MailService(mailSettingsOptions);
+            _authService = new AuthService(_auth, _mapper,_config,_mailService);
         }
         
         [Fact]
@@ -48,7 +60,7 @@ namespace SocialMediaClean.IntegrationTests
             var response =await _authService.RegisterUserAsync(user);
             //ASSERT
             response.ErrorMessages.ShouldBeEmpty();
-            response.Succes.ShouldBeTrue();
+            response.Success.ShouldBeTrue();
         }
         [Fact]
         public async Task RegisterUserAsync_WhenDataIsValidAndUserExists_ReturnsFalse()
@@ -63,7 +75,7 @@ namespace SocialMediaClean.IntegrationTests
             var response = await _authService.RegisterUserAsync(user);
             //ASSERT
             response.ErrorMessages.Count.ShouldBe(1);
-            response.Succes.ShouldBeFalse();
+            response.Success.ShouldBeFalse();
         }
         [Fact]
         public async Task RegisterUserAsync_WhenEmailNotValid_ReturnsFalse()
@@ -78,7 +90,7 @@ namespace SocialMediaClean.IntegrationTests
             var response = await _authService.RegisterUserAsync(user);
             //ASSERT
             response.ErrorMessages.Count.ShouldBe(1);
-            response.Succes.ShouldBeFalse();
+            response.Success.ShouldBeFalse();
         }
         [Fact]
         public async Task RegisterUserAsync_WhenFirstNameMissing_ReturnsFalse()
@@ -94,7 +106,7 @@ namespace SocialMediaClean.IntegrationTests
             var response = await _authService.RegisterUserAsync(user);
             //ASSERT
             response.ErrorMessages.Count.ShouldBe(1);
-            response.Succes.ShouldBeFalse();
+            response.Success.ShouldBeFalse();
         }
         [Fact]
         public async Task RegisterUserAsync_WhenLastNameMissing_ReturnsFalse()
@@ -110,7 +122,7 @@ namespace SocialMediaClean.IntegrationTests
             var response = await _authService.RegisterUserAsync(user);
             //ASSERT
             response.ErrorMessages.Count.ShouldBe(1);
-            response.Succes.ShouldBeFalse();
+            response.Success.ShouldBeFalse();
         }
         [Fact]
         public async Task RegisterUserAsync_WhenPasswordMissing_ReturnsFalse()
@@ -126,7 +138,7 @@ namespace SocialMediaClean.IntegrationTests
             var response = await _authService.RegisterUserAsync(user);
             //ASSERT
             response.ErrorMessages.Count.ShouldBe(1);
-            response.Succes.ShouldBeFalse();
+            response.Success.ShouldBeFalse();
         }
         [Fact]
         public async Task RegisterUserAsync_WhenBirthdayMissing_ReturnsFalse()
@@ -142,7 +154,7 @@ namespace SocialMediaClean.IntegrationTests
             var response = await _authService.RegisterUserAsync(user);
             //ASSERT
             response.ErrorMessages.Count.ShouldBe(1);
-            response.Succes.ShouldBeFalse();
+            response.Success.ShouldBeFalse();
         }
         [Fact]
         public async Task RegisterUserAsync_WhenGenderIncorrect_ReturnsFalse()
@@ -158,30 +170,52 @@ namespace SocialMediaClean.IntegrationTests
             var response = await _authService.RegisterUserAsync(user);
             //ASSERT
             response.ErrorMessages.Count.ShouldBe(1);
-            response.Succes.ShouldBeFalse();
+            response.Success.ShouldBeFalse();
         }
         [Fact]
         public async Task LoginUserAsync_WhenUserIsCorrect_ReturnsToken()
         {
+            //ARRANGE
             var login = new LoginRequest
             {
                 Email = "talpaumirceacristian@gmail.com",
-                Password = "password"
+                Password = "ceva123"
             };
+            //ACT
             var response = await _authService.LoginUserAsync(login);
-            response.ErrorMessages.ShouldBeEmpty();
+            //ASSERT
+            response.ErrorMessages.Count.ShouldBe(0);
             response.Token.ShouldNotBeNullOrEmpty();
         }
         [Fact]
         public async Task LoginUserAsync_WhenUserNotExists_ReturnsFalse()
         {
+            //ARRANGE
             var login = new LoginRequest
             {
                 Email = "talpaumirceacristian@gmail.com",
                 Password = "passsword"
             };
+            //ACT
             var response = await _authService.LoginUserAsync(login);
+            //ASSERT
             response.ErrorMessages.Count.ShouldBe(1);
+            response.Token.ShouldBeNullOrEmpty();
+        }
+
+        [Fact]
+        public async Task LoginUserAsync_WhenEmailIsNotVerified_ReturnsFalse()
+        {
+            //ARRANGE
+            var login = new LoginRequest
+            {
+                Email = "talpaumircea123@gmail.com",
+                Password = "ceva123"
+            };
+            //ACT
+            var response = await _authService.LoginUserAsync(login);
+            //ASSERT
+            response.Success.ShouldBeFalse();
             response.Token.ShouldBeNullOrEmpty();
         }
     }

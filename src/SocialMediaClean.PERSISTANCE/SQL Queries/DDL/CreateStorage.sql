@@ -15,5 +15,16 @@ Country VARCHAR(50),
 City VARCHAR(50),
 Address VARCHAR(75),
 ProfilePictureURL VARCHAR(MAX),
-CoverPictureURL VARCHAR(MAX)
-)
+CoverPictureURL VARCHAR(MAX),
+PasswordForgotToken VARCHAR(MAX),
+PasswordChangeToken VARCHAR(MAX),
+EmailVerified BIT NOT NULL DEFAULT 0,
+EmailVerifyToken VARCHAR(MAX)
+);
+
+CREATE TABLE LogEntries (
+    Id INT PRIMARY KEY IDENTITY,
+    Message NVARCHAR(MAX),
+    LogLevel NVARCHAR(50),
+    Timestamp DATETIME DEFAULT GETDATE()
+);

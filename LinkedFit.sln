@@ -7,19 +7,19 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{22921A1B-120
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{F9EEF1E9-1754-4FC3-A005-498D30468073}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SocialMediaClean.APPLICATION", "src\SocialMediaClean.APPLICATION\SocialMediaClean.APPLICATION.csproj", "{700C05E5-A8CD-4822-8833-55D2457F4CCF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LinkedFit.APPLICATION", "src\SocialMediaClean.APPLICATION\LinkedFit.APPLICATION.csproj", "{700C05E5-A8CD-4822-8833-55D2457F4CCF}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SocialMediaClean.UnitTests", "tests\SocialMediaClean.UnitTests\SocialMediaClean.UnitTests.csproj", "{CF09CA98-A267-4CC6-95C1-8C7829AEAD63}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LinkedFit.UnitTests", "tests\SocialMediaClean.UnitTests\LinkedFit.UnitTests.csproj", "{CF09CA98-A267-4CC6-95C1-8C7829AEAD63}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SocialMediaClean.IntegrationTests", "tests\SocialMediaClean.IntegrationTests\SocialMediaClean.IntegrationTests.csproj", "{42048469-D625-4279-BB27-25BC98CFDA85}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LinkedFit.IntegrationTests", "tests\SocialMediaClean.IntegrationTests\LinkedFit.IntegrationTests.csproj", "{42048469-D625-4279-BB27-25BC98CFDA85}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SocialMediaClean.API", "src\SocialMediaClean.API\SocialMediaClean.API.csproj", "{512950F4-4A3B-482A-8935-18AEF5371021}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LinkedFit.API", "src\SocialMediaClean.API\LinkedFit.API.csproj", "{512950F4-4A3B-482A-8935-18AEF5371021}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SocialMediaClean.DOMAIN", "src\SocialMediaClean.DOMAIN\SocialMediaClean.DOMAIN.csproj", "{99F40465-050E-441F-8061-E7599269511D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LinkedFit.DOMAIN", "src\SocialMediaClean.DOMAIN\LinkedFit.DOMAIN.csproj", "{99F40465-050E-441F-8061-E7599269511D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SocialMediaClean.INFRASTRUCTURE", "src\SocialMediaClean.INFRASTRUCTURE\SocialMediaClean.INFRASTRUCTURE.csproj", "{0C56B74F-5722-4500-8434-42EEEECECF52}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LinkedFit.INFRASTRUCTURE", "src\SocialMediaClean.INFRASTRUCTURE\LinkedFit.INFRASTRUCTURE.csproj", "{0C56B74F-5722-4500-8434-42EEEECECF52}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SocialMediaClean.PERSISTANCE", "src\SocialMediaClean.PERSISTANCE\SocialMediaClean.PERSISTANCE.csproj", "{6DAB61CD-DECC-4064-B548-6C8316BB63FE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LinkedFit.PERSISTANCE", "src\SocialMediaClean.PERSISTANCE\LinkedFit.PERSISTANCE.csproj", "{6DAB61CD-DECC-4064-B548-6C8316BB63FE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

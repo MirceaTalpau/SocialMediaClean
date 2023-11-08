@@ -13,13 +13,16 @@
     <PackageReference Include="FluentValidation" Version="11.7.1" />
     <PackageReference Include="FluentValidation.AspNetCore" Version="11.3.0" />
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.7.1" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="7.0.0" />
     <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="6.24.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.24.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\SocialMediaClean.DOMAIN\SocialMediaClean.DOMAIN.csproj" />
-    <ProjectReference Include="..\SocialMediaClean.PERSISTANCE\SocialMediaClean.PERSISTANCE.csproj" />
+    <ProjectReference Include="..\SocialMediaClean.DOMAIN\LinkedFit.DOMAIN.csproj" />
+    <ProjectReference Include="..\SocialMediaClean.INFRASTRUCTURE\LinkedFit.INFRASTRUCTURE.csproj" />
+    <ProjectReference Include="..\SocialMediaClean.PERSISTANCE\LinkedFit.PERSISTANCE.csproj" />
   </ItemGroup>
 
 </Project>

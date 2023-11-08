@@ -1,47 +1,68 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using SocialMediaClean.APPLICATION.Contracts;
 using SocialMediaClean.APPLICATION.Requests;
 using SocialMediaClean.APPLICATION.Response;
 
 namespace SocialMediaClean.API.Controllers
 {
-    [Route("api/v1/auth")]
+    [Route("api/v1/auth/")]
+    [ApiController]
     [AllowAnonymous]
     public class AuthController : ControllerBase
     {
         private readonly IAuthService _authService;
-        public AuthController(IAuthService authService)
+        private readonly ILogger<AuthController> _logger;
+        public AuthController(IAuthService authService, ILogger<AuthController> logger)
         {
             _authService = authService;
+            _logger = logger;
+
         }
 
-        [Route("/login")]
-        [HttpPost]
-        public async Task<ActionResult<LoginResponse>> LoginUserAsync(LoginRequest request)
+        
+        [HttpPost("login")]
+        public async Task<ActionResult<LoginResponse>> LoginUserAsync([FromBody]LoginRequest request)
         {
+            var requestJson = JsonConvert.SerializeObject(request, Formatting.Indented);
+            _logger.LogInformation($"Login request received!");
+            try
+            { 
             var response = await _authService.LoginUserAsync(request);
-            if(response.Token.Equals(String.Empty))
+            if(response.Token == null)
             {
-                return Unauthorized(response);
+                _logger.LogWarning($"Login request: {requestJson} failed with the response message: {response.Message}",requestJson,response.Message);
+                return Unauthorized(response.Message);
             }
             return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Exception has been raised at the payload {requestJson} with the exception message: {ex.Message}");
+                throw;
+            }
         }
 
-        [Route("/register")]
-        [HttpPost]
-        public async Task<ActionResult<RegisterResponse>> RegisterUserAsync(RegisterRequest request)
+        
+        [HttpPost("register")]
+        public async Task<ActionResult<RegisterResponse>> RegisterUserAsync([FromBody]RegisterRequest request)
         {
-            try { 
+            var requestJson = JsonConvert.SerializeObject(request, Formatting.Indented);
+            _logger.LogInformation("Register request received");
+            try
+            { 
             var response = await _authService.RegisterUserAsync(request);
-            if (!response.Succes)
+            if (!response.Success)
             {
+                _logger.LogWarning($"Register user failed: {requestJson}, message: {response.Message}");
                 return BadRequest(response);
             }
             return Ok(response);
             }
             catch (Exception ex)
             {
+                _logger.LogError($"Exception raised at the payload : {requestJson} with the exception message: {ex.Message}");
                 throw;
             }
         }

@@ -1,8 +1,7 @@
 ﻿namespace SocialMediaClean.APPLICATION.Response
 {
-    public class LoginResponse : Response
+    public class LoginResponse : BaseResponse
     {
-        public bool Success { get; set; } = false;
-        public string Token { get; set; } = string.Empty;
+        public string? Token { get; set; } = null;
     }
 }
