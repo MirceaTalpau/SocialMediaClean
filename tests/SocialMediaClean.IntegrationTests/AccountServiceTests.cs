@@ -36,7 +36,7 @@ namespace SocialMediaClean.IntegrationTests
             _config = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build();
             _db = new DbConnectionFactory(_config);
             _accountRepository = new AccountRepository(_db);
-            _accountService = new AccountService(_accountRepository,_mailService);
+            _accountService = new AccountService(_accountRepository,_mailService,_config);
 
         }
 

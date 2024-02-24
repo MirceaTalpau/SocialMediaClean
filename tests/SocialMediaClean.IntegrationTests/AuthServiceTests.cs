@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Shouldly;
+using SocialMediaClean.APPLICATION.DTOs;
 using SocialMediaClean.APPLICATION.Mapper;
 using SocialMediaClean.APPLICATION.Requests;
 using SocialMediaClean.APPLICATION.Services;
@@ -47,7 +48,22 @@ namespace SocialMediaClean.IntegrationTests
             _mailService = new MailService(mailSettingsOptions);
             _authService = new AuthService(_auth, _mapper,_config,_mailService);
         }
-        
+
+        [Fact]
+        public async Task RegisterUserAsync_HappyFlow_ReturnsTrue()
+        {
+            //ARRANGE
+            var user = _fixture.Build<RegisterRequest>()
+                .With(x => x.Email, "talpaumirceacristian@gmail.com")
+                .With(x => x.Password, "ceva123")
+                .Create();
+            //ACT
+            var response = await _authService.RegisterUserAsync(user);
+            //ASSERT
+            response.ErrorMessages.ShouldBeEmpty();
+            response.Success.ShouldBeTrue();
+        }
+
         [Fact]
         public async Task RegisterUserAsync_WhenDataIsValidAndUserNotExists_ReturnsTrue()
         {
@@ -140,22 +156,7 @@ namespace SocialMediaClean.IntegrationTests
             response.ErrorMessages.Count.ShouldBe(1);
             response.Success.ShouldBeFalse();
         }
-        [Fact]
-        public async Task RegisterUserAsync_WhenBirthdayMissing_ReturnsFalse()
-        {
-            //ARRANGE
-            var user = _fixture.Build<RegisterRequest>()
-                .With(x => x.Gender, Gender.M)
-                .With(x => x.Email, "talpaumircea@gmail.com")
-                .With(x => x.PhoneNumber, "1234567890")
-                .With(x => x.BirthDay, DateTime.MinValue)
-                .Create();
-            //ACT
-            var response = await _authService.RegisterUserAsync(user);
-            //ASSERT
-            response.ErrorMessages.Count.ShouldBe(1);
-            response.Success.ShouldBeFalse();
-        }
+        
         [Fact]
         public async Task RegisterUserAsync_WhenGenderIncorrect_ReturnsFalse()
         {
@@ -172,6 +173,7 @@ namespace SocialMediaClean.IntegrationTests
             response.ErrorMessages.Count.ShouldBe(1);
             response.Success.ShouldBeFalse();
         }
+        
         [Fact]
         public async Task LoginUserAsync_WhenUserIsCorrect_ReturnsToken()
         {
@@ -193,7 +195,7 @@ namespace SocialMediaClean.IntegrationTests
             //ARRANGE
             var login = new LoginRequest
             {
-                Email = "talpaumirceacristian@gmail.com",
+                Email = "talpaumirceacristian@ngmail.com",
                 Password = "passsword"
             };
             //ACT
@@ -209,7 +211,7 @@ namespace SocialMediaClean.IntegrationTests
             //ARRANGE
             var login = new LoginRequest
             {
-                Email = "talpaumircea123@gmail.com",
+                Email = "talpaumircea@gmail.com",
                 Password = "ceva123"
             };
             //ACT
@@ -218,5 +220,24 @@ namespace SocialMediaClean.IntegrationTests
             response.Success.ShouldBeFalse();
             response.Token.ShouldBeNullOrEmpty();
         }
+        [Fact]
+        public async Task LogOrRegisterGmailUserAsync_WhenUserNotExists_ReturnsToken()
+        {
+            //ARRANGE
+            var login = new RegisterRequestDTO
+            {
+                Email = "talpaumirceacristian@gmail.com",
+                FirstName = "Mircea",
+                LastName = "Talpau",
+
+                ProfileAvatar = "ceva.sq"
+            };
+            //ACT
+            var response = await _authService.LogOrRegisterGmailUserAsync(login);
+            //ASSERT
+            response.ErrorMessages.ShouldBeEmpty();
+            response.Token.ShouldNotBeNullOrEmpty();
+        }
     }
+    
 }

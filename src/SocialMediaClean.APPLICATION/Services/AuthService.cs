@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using LinkedFit.DOMAIN.Models.DTOs;
 using Microsoft.IdentityModel.Tokens;
 using SocialMediaClean.APPLICATION.Contracts;
 using SocialMediaClean.APPLICATION.DTOs;
@@ -69,7 +70,7 @@ namespace SocialMediaClean.APPLICATION.Services
             {
                 Receiver = registerRequest.Email,
                 Subject = "Email confirmation",
-                Body = $"Click <a href=\"https://localhost:4200/confirm/email/{registerRequest.Email}/{confirmationToken}\">here</a> to confirm your email."
+                Body = $"Click <a href=\"http://localhost:4200/auth/confirm/email/{registerRequest.Email}/{confirmationToken}\">here</a> to confirm your email."
             };
             await _mailService.SendEmailAsync(mail);
             response.Message = "Registration succesfully!";
@@ -91,21 +92,28 @@ namespace SocialMediaClean.APPLICATION.Services
                 }
                 return response;
             }
-            var verified = await _authRepository.IsEmailVerifiedAsync(loginRequest.Email);
-            if (!verified)
+            var exists = await _authRepository.CheckGmailAsync(loginRequest.Email);
+            if(!exists.Exists)
             {
-                response.Message = "Email is not verified!";
+                response.Message = "User does not exists!";
+                response.ErrorMessages.Add("User does not exists", "There is no user with that email!");
                 return response;
             }
             var passwordAndSalt = await _authRepository.GetPasswordAndSaltAsync(loginRequest.Email);
             var salt = ConvertSaltToByte(passwordAndSalt.PasswordSalt);
 
-            //var salt = Convert.ToByte(passwordAndSalt.PasswordSalt);
-            if (VerifyPassword(loginRequest.Password, passwordAndSalt.Password, salt))
+            var validPassword = VerifyPassword(loginRequest.Password, passwordAndSalt.Password, salt);
+            if (validPassword)
             {
-                response.Token = GenerateToken(passwordAndSalt.ID);
+                var verified = await _authRepository.IsEmailVerifiedAsync(loginRequest.Email);
+                if (!verified)
+                {
+                    response.Message = "Email is not verified!";
+                    return response;
+                }
                 response.Code = 200;
                 response.Success = true;
+                response.Token = GenerateToken(exists.ID);
                 return response;
             }
             response.ErrorMessages.Add("Invalid", "User or password invalid!");
@@ -139,6 +147,7 @@ namespace SocialMediaClean.APPLICATION.Services
                 keySize);
             return Convert.ToHexString(hash);
         }
+        
         private string GenerateToken(int userID)
         {
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
@@ -150,12 +159,43 @@ namespace SocialMediaClean.APPLICATION.Services
             var token = new JwtSecurityToken(_config["Jwt:Issuer"],
                 _config["Jwt:Audience"],
                 claims,
-                expires: DateTime.Now.AddMinutes(90),
+                expires: DateTime.UtcNow.AddMinutes(90),
                 signingCredentials: credentials);
-
-
             return new JwtSecurityTokenHandler().WriteToken(token);
-
         }
+
+        private async Task<CheckGmailDTO> CheckGmailAsync(string email)
+        {
+            var exists = await _authRepository.CheckGmailAsync(email);
+            return exists;
+        }
+
+        //TO DO : Implement this method
+        //MODIFY PARAMETER TO INCLUDE A CLASS THAT HAS EMAIL AND FNAME LNAME AND ProfilePicURI SO YOU CAN REGISTER THE USER
+        public async Task<LoginResponse> LogOrRegisterGmailUserAsync(RegisterRequestDTO req)
+        {
+            var exists = await CheckGmailAsync(req.Email);
+            var response = new LoginResponse()
+            {
+                Code = 400,
+                Success = false,
+            };
+            if(exists.Exists)
+            {
+                response.Code = 200;
+                response.Success = true;
+                response.Token = GenerateToken(exists.ID);
+                return response;
+            }
+            else
+            {
+                await _authRepository.RegisterUserAsync(req,"");
+                response.Code = 200;
+                response.Success = true;
+                response.Token = GenerateToken(exists.ID);
+                return response;
+            }
+        }
+
     }
 }

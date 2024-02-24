@@ -16,6 +16,7 @@ namespace SocialMediaClean.PERSISTANCE.Repositories
         private readonly string GET_FORGOT_PASSWORD_TOKEN = "uspt_GetForgotPasswordToken";
         private readonly string VALIDATE_EMAIL = "usp_ValidateEmail";
         private readonly string CHECK_EMAIL_VERIFIED = "usp_CheckEmailVerified";
+        private readonly string GET_PASSWORD_RESET_TOKEN = "usp_account_GetPasswordResetToken";
         private readonly IDbConnectionFactory _db;
 
         public AccountRepository(IDbConnectionFactory db)
@@ -23,12 +24,17 @@ namespace SocialMediaClean.PERSISTANCE.Repositories
             _db = db;
         }
 
-        public async Task<string> CheckExistingUserAsync(string email)
+        public async Task<string> CheckExistingUserAsync(string email="",string phone="")
         {
             using(var conn = await _db.CreateDbConnectionAsync())
             {
+                if(email == string.Empty && phone == string.Empty)
+                {
+                    throw new ArgumentException("Email or phone must be provided");
+                }
                 var parameters = new DynamicParameters();
                 parameters.Add("Email", email);
+                parameters.Add("PhoneNumber", phone);
                 string existingUser = await conn.ExecuteScalarAsync<string>(CHECK_EXISTING_USER, parameters, commandType: CommandType.StoredProcedure);
                 if(existingUser != null)
                 {
@@ -47,6 +53,17 @@ namespace SocialMediaClean.PERSISTANCE.Repositories
                 parameters.Add("Password",changePassword.Password);
                 parameters.Add("PasswordSalt", changePassword.PasswordSalt);
                 await conn.ExecuteAsync(CHANGE_PASSWORD,parameters, commandType: CommandType.StoredProcedure);
+            }
+        }
+
+        public async Task<string> GetPasswordResetTokenAsync(int id)
+        {
+            using (var conn = await _db.CreateDbConnectionAsync())
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("ID", id);
+                string token = await conn.QuerySingleAsync<string>(GET_PASSWORD_RESET_TOKEN, parameters, commandType: CommandType.StoredProcedure);
+                return token;
             }
         }
 
@@ -112,8 +129,9 @@ namespace SocialMediaClean.PERSISTANCE.Repositories
             {
                 var parameters = new DynamicParameters();
                 parameters.Add("Email", email);
-                bool result = false;
-                result = await conn.QuerySingleAsync<bool>(CHECK_EMAIL_VERIFIED, parameters, commandType: CommandType.StoredProcedure);
+                parameters.Add("Verified", dbType: DbType.Boolean, direction: ParameterDirection.Output);
+                await conn.QueryAsync(CHECK_EMAIL_VERIFIED, parameters, commandType: CommandType.StoredProcedure);
+                var result = parameters.Get<bool>("Verified");
                 return result;
             }
         }

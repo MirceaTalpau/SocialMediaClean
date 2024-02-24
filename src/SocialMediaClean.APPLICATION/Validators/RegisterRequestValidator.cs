@@ -7,32 +7,28 @@ namespace SocialMediaClean.APPLICATION.Validators
     {
         public RegisterRequestValidator() 
         {
-            RuleFor(x => x.BirthDay)
-                .NotEmpty()
-                .WithMessage("Birthday cannot be empty!");
             RuleFor(x => x.Email)
                 .EmailAddress()
                     .WithMessage("Invalid email!")
                 .NotEmpty()
                     .WithMessage("Invalid email!");
-            RuleFor(x => x.Password)
-                .NotEmpty()
-                    .WithMessage("Password cannot be empty!");
             RuleFor(x => x.FirstName)
                 .NotEmpty()
                     .WithMessage("First name cannot be empty!");
             RuleFor(x => x.LastName)
                 .NotEmpty()
                     .WithMessage("Last name cannot be empty!");
-            RuleFor(x => x.Gender)
-                .Must(BeValidGender)
-                    .WithMessage("Gender must be either 'M' or 'F'");
+            
                 
         
 
         }
         private bool BeValidGender(string gender)
         {
+            if (string.IsNullOrEmpty(gender))
+            {
+                return false;
+            }
             return gender.Equals("M") || gender.Equals("F");
         }
     }

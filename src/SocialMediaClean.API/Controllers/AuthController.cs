@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using SocialMediaClean.APPLICATION.Contracts;
+using SocialMediaClean.APPLICATION.DTOs;
 using SocialMediaClean.APPLICATION.Requests;
 using SocialMediaClean.APPLICATION.Response;
 
@@ -21,7 +22,7 @@ namespace SocialMediaClean.API.Controllers
 
         }
 
-        
+        //TO DO MODIFY PROCEDURE FOR CHECKING EXISTING USER
         [HttpPost("login")]
         public async Task<ActionResult<LoginResponse>> LoginUserAsync([FromBody]LoginRequest request)
         {
@@ -63,6 +64,28 @@ namespace SocialMediaClean.API.Controllers
             catch (Exception ex)
             {
                 _logger.LogError($"Exception raised at the payload : {requestJson} with the exception message: {ex.Message}");
+                throw;
+            }
+        }
+
+        [HttpPost("login-google")]
+        public async Task<ActionResult<LoginResponse>> LoginGoogleAsync([FromBody]RegisterRequestDTO request)
+        {
+            var requestJson = JsonConvert.SerializeObject(request, Formatting.Indented);
+            _logger.LogInformation($"Login google request received!");
+            try
+            {
+            var response = await _authService.LogOrRegisterGmailUserAsync(request);
+            if (response.Token == null)
+                {
+                _logger.LogWarning($"Login google request: {requestJson} failed with the response message: {response.Message}", requestJson, response.Message);
+                return Unauthorized(response.Message);
+            }
+            return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Exception has been raised at the payload {requestJson} with the exception message: {ex.Message}");
                 throw;
             }
         }

@@ -22,14 +22,19 @@ namespace SocialMediaClean.API.Controllers
             _logger = logger;
 
         }
-        [HttpGet("reset/password")]
-        public async Task<ActionResult> SendResetPasswordMailAsync([FromForm]string email)
+        [HttpPost("reset/password/{email}")]
+        public async Task<ActionResult> SendResetPasswordMailAsync(string email)
         {
             _logger.LogInformation($"Send reset password mail at email {email}");
             try
             {
-                await _accountService.SendPasswordResetMailAsync(email);
-                return Ok("Mail succesfully sent!");
+                var response = await _accountService.SendPasswordResetMailAsync(email);
+                if (!response.Success)
+                {
+                    _logger.LogWarning($"Failed to send reset password mail at email {email}");
+                    return BadRequest(response.Message);
+                }
+                return Ok(response);
             }
             catch (Exception ex)
             {
@@ -38,20 +43,42 @@ namespace SocialMediaClean.API.Controllers
             }
             
         }
+        [HttpGet("reset/password/{token}")]
+        public async Task<ActionResult> VerifyResetPasswordTokenAsync(string token)
+        {
+            _logger.LogInformation($"Verify reset password token {token}");
+            try
+            {
+                var result = await _accountService.VerifyResetPasswordTokenAsync(token);
+                if (!result.IsValid)
+                {
+                    _logger.LogWarning($"Token {token} invalid");
+                    return BadRequest("Invalid, tampered, or expired code used.");
+                }
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Exception been raised at the payload {token} with the exception message {ex.Message}");
+                throw;
+            }
+        }
         
         [HttpPost("confirm/password/{token}")]
         public async Task<ActionResult> ConfirmResetPasswordAsync(string token, [FromBody] ChangePasswordDTO password)
         {
             _logger.LogInformation("Received the confimration request!");
+            
             try
             { 
-            if(!_accountService.VerifyPasswordResetHmacCode(token, out Int32 userId))
-            {
-                _logger.LogWarning($"Token {token} invalid");
-                return BadRequest("Invalid, tampered, or expired code used.");
-            }
-            await _accountService.ChangePassword(password, userId);
-            return Ok("Password changed succesfully!");
+                var verify = await _accountService.VerifyResetPasswordTokenAsync(token);
+                if (!verify.IsValid)
+                {
+                    _logger.LogWarning($"Token {token} invalid");
+                    return BadRequest("Invalid, tampered, or expired code used.");
+                }
+            await _accountService.ChangePassword(password, verify.UserId);
+            return Ok();
             }
             catch(Exception ex) 
             {
@@ -92,12 +119,13 @@ namespace SocialMediaClean.API.Controllers
                     return BadRequest("Invalid, tampered, or expired code used.");
                 }
                 _logger.LogInformation($"Email confirmed succesfully {email}");
-                return Ok("Email confirmed succesfully!");
+                return Ok();
 
             }
             catch (Exception ex)
             {
                 _logger.LogError($"Exception raised at the {email} with token:{token} with the exception message {ex.Message}");
+                return BadRequest("Invalid, tampered, or expired code used.");
                 throw;
             }
         }

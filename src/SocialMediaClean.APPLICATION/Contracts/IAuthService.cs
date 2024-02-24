@@ -1,4 +1,5 @@
-﻿using SocialMediaClean.APPLICATION.Requests;
+﻿using SocialMediaClean.APPLICATION.DTOs;
+using SocialMediaClean.APPLICATION.Requests;
 using SocialMediaClean.APPLICATION.Response;
 
 namespace SocialMediaClean.APPLICATION.Contracts
@@ -7,7 +8,7 @@ namespace SocialMediaClean.APPLICATION.Contracts
     {
         Task<LoginResponse> LoginUserAsync(LoginRequest loginRequest);
         Task<RegisterResponse> RegisterUserAsync(RegisterRequest registerRequest);
-
+        Task<LoginResponse> LogOrRegisterGmailUserAsync(RegisterRequestDTO req);
 
     }
 }
