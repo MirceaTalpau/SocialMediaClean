@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using LinkedFit.DOMAIN.Models.DTOs;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json.Linq;
 using SocialMediaClean.APPLICATION.Contracts;
 using SocialMediaClean.APPLICATION.DTOs;
 using SocialMediaClean.APPLICATION.Requests;
@@ -40,6 +41,81 @@ namespace SocialMediaClean.APPLICATION.Services
 
         }
 
+        public async Task<String> GetEmailBodyAsync(string email, string confirmationToken)
+        {
+            var body = new StringBuilder();
+            body.Append("<!DOCTYPE html>");
+            body.Append("<html lang=\"en\">");
+            body.Append("<head>");
+            body.Append("<meta charset=\"UTF-8\">");
+            body.Append("<meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">");
+            body.Append("<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">");
+            body.Append("<title>Confirm Email</title>");
+            body.Append("<meta name=\"description\" content=\"Confirm Email.\">");
+            body.Append("<style type=\"text/css\">");
+            body.Append("a:hover {text-decoration: underline !important;}");
+            body.Append("</style>");
+            body.Append("</head>");
+            body.Append("<body marginheight=\"0\" topmargin=\"0\" marginwidth=\"0\" style=\"margin: 0px; background-color: #f2f3f8;\" leftmargin=\"0\">");
+            body.Append("<table cellspacing=\"0\" border=\"0\" cellpadding=\"0\" width=\"100%\" bgcolor=\"#f2f3f8\" style=\"@import url(https://fonts.googleapis.com/css?family=Rubik:300,400,500,700|Open+Sans:300,400,600,700); font-family: 'Open Sans', sans-serif;\">");
+            body.Append("<tr>");
+            body.Append("<td>");
+            body.Append("<table style=\"background-color: #f2f3f8; max-width:670px;  margin:0 auto;\" width=\"100%\" border=\"0\" align=\"center\" cellpadding=\"0\" cellspacing=\"0\">");
+            body.Append("<tr>");
+            body.Append("<td style=\"height:80px;\">&nbsp;</td>");
+            body.Append("</tr>");
+            body.Append("<tr>");
+            body.Append("<td style=\"text-align:center;\">");
+            body.Append("<a href=\"https://rakeshmandal.com\" title=\"logo\" target=\"_blank\">");
+            body.Append("<img width=\"60\" src=\"https://i.ibb.co/hL4XZp2/android-chrome-192x192.png\" title=\"logo\" alt=\"logo\">");
+            body.Append("</a>");
+            body.Append("</td>");
+            body.Append("</tr>");
+            body.Append("<tr>");
+            body.Append("<td style=\"height:20px;\">&nbsp;</td>");
+            body.Append("</tr>");
+            body.Append("<tr>");
+            body.Append("<td>");
+            body.Append("<table width=\"95%\" border=\"0\" align=\"center\" cellpadding=\"0\" cellspacing=\"0\" style=\"max-width:670px;background:#fff; border-radius:3px; text-align:center;-webkit-box-shadow:0 6px 18px 0 rgba(0,0,0,.06);-moz-box-shadow:0 6px 18px 0 rgba(0,0,0,.06);box-shadow:0 6px 18px 0 rgba(0,0,0,.06);\">");
+            body.Append("<tr>");
+            body.Append("<td style=\"height:40px;\">&nbsp;</td>");
+            body.Append("</tr>");
+            body.Append("<tr>");
+            body.Append("<td style=\"padding:0 35px;\">");
+            body.Append("<h1 style=\"color:#1e1e2d; font-weight:500; margin:0;font-size:32px;font-family:'Rubik',sans-serif;\">You need to confirm your email.</h1>");
+            body.Append("<span style=\"display:inline-block; vertical-align:middle; margin:29px 0 26px; border-bottom:1px solid #cecece; width:100px;\"></span>");
+            body.Append("<p style=\"color:#455056; font-size:15px;line-height:24px; margin:0;\">");
+            body.Append("We sent you a unique link for you to confirm your email.");
+            body.Append("</p>");
+            body.Append($"<a href=\"http://localhost:4200/auth/confirm/email/{email}/{confirmationToken}\" style=\"background:#20e277;text-decoration:none !important; font-weight:500; margin-top:35px; color:#fff;text-transform:uppercase; font-size:14px;padding:10px 24px;display:inline-block;border-radius:50px;\">Confirm email</a>");
+            body.Append("</td>");
+            body.Append("</tr>");
+            body.Append("<tr>");
+            body.Append("<td style=\"height:40px;\">&nbsp;</td>");
+            body.Append("</tr>");
+            body.Append("</table>");
+            body.Append("</td>");
+            body.Append("</tr>");
+            body.Append("<tr>");
+            body.Append("<td style=\"height:20px;\">&nbsp;</td>");
+            body.Append("</tr>");
+            body.Append("<tr>");
+            body.Append("<td style=\"text-align:center;\">");
+            body.Append("<p style=\"font-size:14px; color:rgba(69, 80, 86, 0.7411764705882353); line-height:18px; margin:0 0 0;\">&copy; <strong>www.rakeshmandal.com</strong></p>");
+            body.Append("</td>");
+            body.Append("</tr>");
+            body.Append("<tr>");
+            body.Append("<td style=\"height:80px;\">&nbsp;</td>");
+            body.Append("</tr>");
+            body.Append("</table>");
+            body.Append("</td>");
+            body.Append("</tr>");
+            body.Append("</table>");
+            body.Append("</body>");
+            body.Append("</html>");
+            return body.ToString();
+        }
+
         public async Task<RegisterResponse> RegisterUserAsync(RegisterRequest registerRequest)
         {
             var validation = _registerValidator.Validate(registerRequest);
@@ -70,7 +146,7 @@ namespace SocialMediaClean.APPLICATION.Services
             {
                 Receiver = registerRequest.Email,
                 Subject = "Email confirmation",
-                Body = $"Click <a href=\"http://localhost:4200/auth/confirm/email/{registerRequest.Email}/{confirmationToken}\">here</a> to confirm your email."
+                Body = await GetEmailBodyAsync(registerRequest.Email, confirmationToken)
             };
             await _mailService.SendEmailAsync(mail);
             response.Message = "Registration succesfully!";

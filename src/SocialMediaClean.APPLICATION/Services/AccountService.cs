@@ -97,33 +97,158 @@ namespace SocialMediaClean.APPLICATION.Services
 
         }
 
-        //private string GenerateResetPasswordToken(int userID)
-        //{
-        //    byte[] userIdBytes = BitConverter.GetBytes(userID);
-        //    byte[] time = BitConverter.GetBytes(DateTime.UtcNow.ToBinary());
-        //    byte[] key = Guid.NewGuid().ToByteArray();
-        //    byte[] tokenBytes = userIdBytes.Concat(time).Concat(key).ToArray();
-        //    string token = Convert.ToBase64String(tokenBytes);
-        //    return token;
-        //}
-
-        //public bool VerifyResetPasswordToken(string token,out int userID)
-        //{
-        //    byte[] tokenBytes = Convert.FromBase64String(token);
-        //    int userIdSize = sizeof(int);
-        //    byte[] userIdBytes = tokenBytes.Take(userIdSize).ToArray();
-        //    userID = BitConverter.ToInt32(userIdBytes, 0);
-        //    byte[] timestampBytes = tokenBytes.Skip(userIdSize).ToArray();
-
-        //    // Convert timestamp bytes back to DateTime
-        //    DateTime timestamp = DateTime.FromBinary(BitConverter.ToInt64(timestampBytes, 0));
-
-        //    if (DateTime.UtcNow - timestamp > TimeSpan.FromMinutes(5))
-        //    {
-        //        return false;
-        //    }
-        //    return true;
-        //}
+        private async Task<String> GenerateBodyForEmail(string email, string token,string type)
+        {
+            StringBuilder body = new StringBuilder();
+            if (type == "reset")
+            {
+                body = new StringBuilder();
+                body.Append("<!DOCTYPE html>");
+                body.Append("<html lang=\"en\">");
+                body.Append("<head>");
+                body.Append("<meta charset=\"UTF-8\">");
+                body.Append("<meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">");
+                body.Append("<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">");
+                body.Append("<title>Reset Password</title>");
+                body.Append("<meta name=\"description\" content=\"Reset Password.\">");
+                body.Append("<style type=\"text/css\">");
+                body.Append("a:hover {text-decoration: underline !important;}");
+                body.Append("</style>");
+                body.Append("</head>");
+                body.Append("<body marginheight=\"0\" topmargin=\"0\" marginwidth=\"0\" style=\"margin: 0px; background-color: #f2f3f8;\" leftmargin=\"0\">");
+                body.Append("<table cellspacing=\"0\" border=\"0\" cellpadding=\"0\" width=\"100%\" bgcolor=\"#f2f3f8\" style=\"@import url(https://fonts.googleapis.com/css?family=Rubik:300,400,500,700|Open+Sans:300,400,600,700); font-family: 'Open Sans', sans-serif;\">");
+                body.Append("<tr>");
+                body.Append("<td>");
+                body.Append("<table style=\"background-color: #f2f3f8; max-width:670px;  margin:0 auto;\" width=\"100%\" border=\"0\" align=\"center\" cellpadding=\"0\" cellspacing=\"0\">");
+                body.Append("<tr>");
+                body.Append("<td style=\"height:80px;\">&nbsp;</td>");
+                body.Append("</tr>");
+                body.Append("<tr>");
+                body.Append("<td style=\"text-align:center;\">");
+                body.Append("<a href=\"https://rakeshmandal.com\" title=\"logo\" target=\"_blank\">");
+                body.Append("<img width=\"60\" src=\"https://i.ibb.co/hL4XZp2/android-chrome-192x192.png\" title=\"logo\" alt=\"logo\">");
+                body.Append("</a>");
+                body.Append("</td>");
+                body.Append("</tr>");
+                body.Append("<tr>");
+                body.Append("<td style=\"height:20px;\">&nbsp;</td>");
+                body.Append("</tr>");
+                body.Append("<tr>");
+                body.Append("<td>");
+                body.Append("<table width=\"95%\" border=\"0\" align=\"center\" cellpadding=\"0\" cellspacing=\"0\" style=\"max-width:670px;background:#fff; border-radius:3px; text-align:center;-webkit-box-shadow:0 6px 18px 0 rgba(0,0,0,.06);-moz-box-shadow:0 6px 18px 0 rgba(0,0,0,.06);box-shadow:0 6px 18px 0 rgba(0,0,0,.06);\">");
+                body.Append("<tr>");
+                body.Append("<td style=\"height:40px;\">&nbsp;</td>");
+                body.Append("</tr>");
+                body.Append("<tr>");
+                body.Append("<td style=\"padding:0 35px;\">");
+                body.Append("<h1 style=\"color:#1e1e2d; font-weight:500; margin:0;font-size:32px;font-family:'Rubik',sans-serif;\">You have requested to reset your password</h1>");
+                body.Append("<span style=\"display:inline-block; vertical-align:middle; margin:29px 0 26px; border-bottom:1px solid #cecece; width:100px;\"></span>");
+                body.Append("<p style=\"color:#455056; font-size:15px;line-height:24px; margin:0;\">");
+                body.Append("We cannot simply send you your old password. A unique link to reset your password has been generated for you. To reset your password, click the following link and follow the instructions.");
+                body.Append("</p>");
+                body.Append($"<a href=\"http://localhost:4200/auth/confirm/password/{token}\" style=\"background:#20e277;text-decoration:none !important; font-weight:500; margin-top:35px; color:#fff;text-transform:uppercase; font-size:14px;padding:10px 24px;display:inline-block;border-radius:50px;\">Reset Password</a>");
+                body.Append("</td>");
+                body.Append("</tr>");
+                body.Append("<tr>");
+                body.Append("<td style=\"height:40px;\">&nbsp;</td>");
+                body.Append("</tr>");
+                body.Append("</table>");
+                body.Append("</td>");
+                body.Append("</tr>");
+                body.Append("<tr>");
+                body.Append("<td style=\"height:20px;\">&nbsp;</td>");
+                body.Append("</tr>");
+                body.Append("<tr>");
+                body.Append("<td style=\"text-align:center;\">");
+                body.Append("<p style=\"font-size:14px; color:rgba(69, 80, 86, 0.7411764705882353); line-height:18px; margin:0 0 0;\">&copy; <strong>www.rakeshmandal.com</strong></p>");
+                body.Append("</td>");
+                body.Append("</tr>");
+                body.Append("<tr>");
+                body.Append("<td style=\"height:80px;\">&nbsp;</td>");
+                body.Append("</tr>");
+                body.Append("</table>");
+                body.Append("</td>");
+                body.Append("</tr>");
+                body.Append("</table>");
+                body.Append("</body>");
+                body.Append("</html>");
+            }
+            if(type == "confirm")
+            {
+                body = new StringBuilder();
+                body.Append("<!DOCTYPE html>");
+                body.Append("<html lang=\"en\">");
+                body.Append("<head>");
+                body.Append("<meta charset=\"UTF-8\">");
+                body.Append("<meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">");
+                body.Append("<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">");
+                body.Append("<title>Confirm Email</title>");
+                body.Append("<meta name=\"description\" content=\"Confirm Email.\">");
+                body.Append("<style type=\"text/css\">");
+                body.Append("a:hover {text-decoration: underline !important;}");
+                body.Append("</style>");
+                body.Append("</head>");
+                body.Append("<body marginheight=\"0\" topmargin=\"0\" marginwidth=\"0\" style=\"margin: 0px; background-color: #f2f3f8;\" leftmargin=\"0\">");
+                body.Append("<table cellspacing=\"0\" border=\"0\" cellpadding=\"0\" width=\"100%\" bgcolor=\"#f2f3f8\" style=\"@import url(https://fonts.googleapis.com/css?family=Rubik:300,400,500,700|Open+Sans:300,400,600,700); font-family: 'Open Sans', sans-serif;\">");
+                body.Append("<tr>");
+                body.Append("<td>");
+                body.Append("<table style=\"background-color: #f2f3f8; max-width:670px;  margin:0 auto;\" width=\"100%\" border=\"0\" align=\"center\" cellpadding=\"0\" cellspacing=\"0\">");
+                body.Append("<tr>");
+                body.Append("<td style=\"height:80px;\">&nbsp;</td>");
+                body.Append("</tr>");
+                body.Append("<tr>");
+                body.Append("<td style=\"text-align:center;\">");
+                body.Append("<a href=\"https://rakeshmandal.com\" title=\"logo\" target=\"_blank\">");
+                body.Append("<img width=\"60\" src=\"https://i.ibb.co/hL4XZp2/android-chrome-192x192.png\" title=\"logo\" alt=\"logo\">");
+                body.Append("</a>");
+                body.Append("</td>");
+                body.Append("</tr>");
+                body.Append("<tr>");
+                body.Append("<td style=\"height:20px;\">&nbsp;</td>");
+                body.Append("</tr>");
+                body.Append("<tr>");
+                body.Append("<td>");
+                body.Append("<table width=\"95%\" border=\"0\" align=\"center\" cellpadding=\"0\" cellspacing=\"0\" style=\"max-width:670px;background:#fff; border-radius:3px; text-align:center;-webkit-box-shadow:0 6px 18px 0 rgba(0,0,0,.06);-moz-box-shadow:0 6px 18px 0 rgba(0,0,0,.06);box-shadow:0 6px 18px 0 rgba(0,0,0,.06);\">");
+                body.Append("<tr>");
+                body.Append("<td style=\"height:40px;\">&nbsp;</td>");
+                body.Append("</tr>");
+                body.Append("<tr>");
+                body.Append("<td style=\"padding:0 35px;\">");
+                body.Append("<h1 style=\"color:#1e1e2d; font-weight:500; margin:0;font-size:32px;font-family:'Rubik',sans-serif;\">You need to confirm your email.</h1>");
+                body.Append("<span style=\"display:inline-block; vertical-align:middle; margin:29px 0 26px; border-bottom:1px solid #cecece; width:100px;\"></span>");
+                body.Append("<p style=\"color:#455056; font-size:15px;line-height:24px; margin:0;\">");
+                body.Append("We sent you a unique link for you to confirm your email.");
+                body.Append("</p>");
+                body.Append($"<a href=\"http://localhost:4200/auth/confirm/email/{email}/{token}\" style=\"background:#20e277;text-decoration:none !important; font-weight:500; margin-top:35px; color:#fff;text-transform:uppercase; font-size:14px;padding:10px 24px;display:inline-block;border-radius:50px;\">Confirm email</a>");
+                body.Append("</td>");
+                body.Append("</tr>");
+                body.Append("<tr>");
+                body.Append("<td style=\"height:40px;\">&nbsp;</td>");
+                body.Append("</tr>");
+                body.Append("</table>");
+                body.Append("</td>");
+                body.Append("</tr>");
+                body.Append("<tr>");
+                body.Append("<td style=\"height:20px;\">&nbsp;</td>");
+                body.Append("</tr>");
+                body.Append("<tr>");
+                body.Append("<td style=\"text-align:center;\">");
+                body.Append("<p style=\"font-size:14px; color:rgba(69, 80, 86, 0.7411764705882353); line-height:18px; margin:0 0 0;\">&copy; <strong>www.rakeshmandal.com</strong></p>");
+                body.Append("</td>");
+                body.Append("</tr>");
+                body.Append("<tr>");
+                body.Append("<td style=\"height:80px;\">&nbsp;</td>");
+                body.Append("</tr>");
+                body.Append("</table>");
+                body.Append("</td>");
+                body.Append("</tr>");
+                body.Append("</table>");
+                body.Append("</body>");
+                body.Append("</html>");
+            }
+            return body.ToString();
+            
+        }
 
         public async Task<BaseResponse> SendPasswordResetMailAsync(string email)
         {
@@ -137,76 +262,7 @@ namespace SocialMediaClean.APPLICATION.Services
             var userIDString = await _accountRepository.CheckExistingUserAsync(email,null);
             var user = int.Parse(userIDString);
             var token = GenerateResetPasswordToken(user);
-            StringBuilder body = new StringBuilder();
-            body.Append("<!DOCTYPE html>");
-            body.Append("<html lang=\"en\">");
-            body.Append("<head>");
-            body.Append("<meta charset=\"UTF-8\">");
-            body.Append("<meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">");
-            body.Append("<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">");
-            body.Append("<title>Reset Password Email Template</title>");
-            body.Append("<meta name=\"description\" content=\"Reset Password Email Template.\">");
-            body.Append("<style type=\"text/css\">");
-            body.Append("a:hover {text-decoration: underline !important;}");
-            body.Append("</style>");
-            body.Append("</head>");
-            body.Append("<body marginheight=\"0\" topmargin=\"0\" marginwidth=\"0\" style=\"margin: 0px; background-color: #f2f3f8;\" leftmargin=\"0\">");
-            body.Append("<table cellspacing=\"0\" border=\"0\" cellpadding=\"0\" width=\"100%\" bgcolor=\"#f2f3f8\" style=\"@import url(https://fonts.googleapis.com/css?family=Rubik:300,400,500,700|Open+Sans:300,400,600,700); font-family: 'Open Sans', sans-serif;\">");
-            body.Append("<tr>");
-            body.Append("<td>");
-            body.Append("<table style=\"background-color: #f2f3f8; max-width:670px;  margin:0 auto;\" width=\"100%\" border=\"0\" align=\"center\" cellpadding=\"0\" cellspacing=\"0\">");
-            body.Append("<tr>");
-            body.Append("<td style=\"height:80px;\">&nbsp;</td>");
-            body.Append("</tr>");
-            body.Append("<tr>");
-            body.Append("<td style=\"text-align:center;\">");
-            body.Append("<a href=\"https://rakeshmandal.com\" title=\"logo\" target=\"_blank\">");
-            body.Append("<img width=\"60\" src=\"https://i.ibb.co/hL4XZp2/android-chrome-192x192.png\" title=\"logo\" alt=\"logo\">");
-            body.Append("</a>");
-            body.Append("</td>");
-            body.Append("</tr>");
-            body.Append("<tr>");
-            body.Append("<td style=\"height:20px;\">&nbsp;</td>");
-            body.Append("</tr>");
-            body.Append("<tr>");
-            body.Append("<td>");
-            body.Append("<table width=\"95%\" border=\"0\" align=\"center\" cellpadding=\"0\" cellspacing=\"0\" style=\"max-width:670px;background:#fff; border-radius:3px; text-align:center;-webkit-box-shadow:0 6px 18px 0 rgba(0,0,0,.06);-moz-box-shadow:0 6px 18px 0 rgba(0,0,0,.06);box-shadow:0 6px 18px 0 rgba(0,0,0,.06);\">");
-            body.Append("<tr>");
-            body.Append("<td style=\"height:40px;\">&nbsp;</td>");
-            body.Append("</tr>");
-            body.Append("<tr>");
-            body.Append("<td style=\"padding:0 35px;\">");
-            body.Append("<h1 style=\"color:#1e1e2d; font-weight:500; margin:0;font-size:32px;font-family:'Rubik',sans-serif;\">You have requested to reset your password</h1>");
-            body.Append("<span style=\"display:inline-block; vertical-align:middle; margin:29px 0 26px; border-bottom:1px solid #cecece; width:100px;\"></span>");
-            body.Append("<p style=\"color:#455056; font-size:15px;line-height:24px; margin:0;\">");
-            body.Append("We cannot simply send you your old password. A unique link to reset your password has been generated for you. To reset your password, click the following link and follow the instructions.");
-            body.Append("</p>");
-            body.Append($"<a href=\"http://localhost:4200/auth/confirm/password/{token}\" style=\"background:#20e277;text-decoration:none !important; font-weight:500; margin-top:35px; color:#fff;text-transform:uppercase; font-size:14px;padding:10px 24px;display:inline-block;border-radius:50px;\">Reset Password</a>");
-            body.Append("</td>");
-            body.Append("</tr>");
-            body.Append("<tr>");
-            body.Append("<td style=\"height:40px;\">&nbsp;</td>");
-            body.Append("</tr>");
-            body.Append("</table>");
-            body.Append("</td>");
-            body.Append("</tr>");
-            body.Append("<tr>");
-            body.Append("<td style=\"height:20px;\">&nbsp;</td>");
-            body.Append("</tr>");
-            body.Append("<tr>");
-            body.Append("<td style=\"text-align:center;\">");
-            body.Append("<p style=\"font-size:14px; color:rgba(69, 80, 86, 0.7411764705882353); line-height:18px; margin:0 0 0;\">&copy; <strong>www.rakeshmandal.com</strong></p>");
-            body.Append("</td>");
-            body.Append("</tr>");
-            body.Append("<tr>");
-            body.Append("<td style=\"height:80px;\">&nbsp;</td>");
-            body.Append("</tr>");
-            body.Append("</table>");
-            body.Append("</td>");
-            body.Append("</tr>");
-            body.Append("</table>");
-            body.Append("</body>");
-            body.Append("</html>");
+            var body = await GenerateBodyForEmail(email, token, "reset");
             await SendEmailAsync(email, "Password reset", body.ToString());
             //await SendEmailAsync(email, "Password reset", $"Click <a href=\"http://localhost:4200/auth/confirm/password/{token}\">here</a> to reset your password.");            
             await _accountRepository.InsertForgotPasswordTokenAsync(token, user);
@@ -230,7 +286,8 @@ namespace SocialMediaClean.APPLICATION.Services
             }
             var confirmationToken = Guid.NewGuid().ToString();
             await _accountRepository.UpdateEmailConfirmationTokenAsync(confirmationToken, userID);
-            await SendEmailAsync(email, "Email confirmation", $"Click <a href=\"http://localhost:4200/auth/confirm/email/{email}/{confirmationToken}\">here</a> to confirm your email.");
+            var body = await GenerateBodyForEmail(email, confirmationToken, "confirm");
+            await SendEmailAsync(email, "Email confirmation", body.ToString());
             response.Success = true;
             response.Code = 200;
             response.Message = "Succesfully sent confirmation email!";
