@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using SocialMediaClean.APPLICATION.DTOs;
+using LinkedFit.DOMAIN.Models.DTOs.Auth;
 using SocialMediaClean.APPLICATION.Requests;
 
 namespace SocialMediaClean.APPLICATION.Mapper

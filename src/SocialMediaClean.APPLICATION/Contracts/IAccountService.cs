@@ -1,6 +1,5 @@
-﻿using LinkedFit.DOMAIN.Models.DTOs;
+﻿using LinkedFit.DOMAIN.Models.DTOs.Auth;
 using SocialMediaClean.APPLICATION.Response;
-using SocialMediaClean.DOMAIN.Models.DTOs;
 
 namespace SocialMediaClean.APPLICATION.Contracts
 {

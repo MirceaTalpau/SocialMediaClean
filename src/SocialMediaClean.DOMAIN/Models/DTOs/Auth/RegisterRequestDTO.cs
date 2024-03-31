@@ -1,6 +1,6 @@
 ﻿using SocialMediaClean.DOMAIN;
 
-namespace SocialMediaClean.APPLICATION.DTOs
+namespace LinkedFit.DOMAIN.Models.DTOs.Auth
 {
     public class RegisterRequestDTO
     {

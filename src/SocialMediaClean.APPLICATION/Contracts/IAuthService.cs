@@ -1,4 +1,4 @@
-﻿using SocialMediaClean.APPLICATION.DTOs;
+﻿using LinkedFit.DOMAIN.Models.DTOs.Auth;
 using SocialMediaClean.APPLICATION.Requests;
 using SocialMediaClean.APPLICATION.Response;
 

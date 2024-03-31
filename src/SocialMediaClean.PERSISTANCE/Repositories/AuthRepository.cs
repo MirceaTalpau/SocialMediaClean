@@ -1,7 +1,5 @@
 ﻿using Dapper;
-using LinkedFit.DOMAIN.Models.DTOs;
-using SocialMediaClean.APPLICATION.DTOs;
-using SocialMediaClean.DOMAIN.Models.DTOs;
+using LinkedFit.DOMAIN.Models.DTOs.Auth;
 using SocialMediaClean.DOMAIN.Models.Entities;
 using SocialMediaClean.INFRASTRUCTURE.Interfaces;
 using SocialMediaClean.PERSISTANCE.Interfaces;

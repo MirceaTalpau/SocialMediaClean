@@ -1,13 +1,10 @@
 ﻿using AutoMapper;
-using LinkedFit.DOMAIN.Models.DTOs;
+using LinkedFit.DOMAIN.Models.DTOs.Auth;
 using Microsoft.IdentityModel.Tokens;
-using Newtonsoft.Json.Linq;
 using SocialMediaClean.APPLICATION.Contracts;
-using SocialMediaClean.APPLICATION.DTOs;
 using SocialMediaClean.APPLICATION.Requests;
 using SocialMediaClean.APPLICATION.Response;
 using SocialMediaClean.APPLICATION.Validators;
-using SocialMediaClean.DOMAIN.Models.DTOs;
 using SocialMediaClean.INFRASTRUCTURE.Interfaces;
 using SocialMediaClean.INFRASTRUCTURE.Models;
 using SocialMediaClean.PERSISTANCE.Interfaces;

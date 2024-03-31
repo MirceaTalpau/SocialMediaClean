@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
+using LinkedFit.APPLICATION.Contracts;
+using LinkedFit.APPLICATION.Services;
 using SocialMediaClean.APPLICATION.Contracts;
-using SocialMediaClean.APPLICATION.DTOs;
 using SocialMediaClean.APPLICATION.Logger;
 using SocialMediaClean.APPLICATION.Mapper;
 using SocialMediaClean.APPLICATION.Requests;
@@ -28,6 +29,9 @@ namespace SocialMediaClean.APPLICATION
                 var connectionFactory = sp.GetRequiredService<IDbConnectionFactory>();
                 return new DbLoggerProvider(connectionFactory);
             });
+
+            ////////////////POSTS/////////////////////
+            services.AddScoped<IPostService, PostService>();
             return services;
         }
     }

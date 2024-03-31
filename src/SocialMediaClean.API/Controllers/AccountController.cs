@@ -1,10 +1,10 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using LinkedFit.DOMAIN.Models.DTOs.Auth;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using SocialMediaClean.APPLICATION.Contracts;
 using SocialMediaClean.APPLICATION.Services;
-using SocialMediaClean.DOMAIN.Models.DTOs;
 using SocialMediaClean.INFRASTRUCTURE.Interfaces;
 using SocialMediaClean.INFRASTRUCTURE.Models;
 

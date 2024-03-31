@@ -1,6 +1,4 @@
-﻿using LinkedFit.DOMAIN.Models.DTOs;
-using SocialMediaClean.APPLICATION.DTOs;
-using SocialMediaClean.DOMAIN.Models.DTOs;
+﻿using LinkedFit.DOMAIN.Models.DTOs.Auth;
 
 namespace SocialMediaClean.PERSISTANCE.Interfaces
 {

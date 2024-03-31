@@ -1,8 +1,7 @@
-﻿using LinkedFit.DOMAIN.Models.DTOs;
+﻿using LinkedFit.DOMAIN.Models.DTOs.Auth;
 using Microsoft.IdentityModel.Tokens;
 using SocialMediaClean.APPLICATION.Contracts;
 using SocialMediaClean.APPLICATION.Response;
-using SocialMediaClean.DOMAIN.Models.DTOs;
 using SocialMediaClean.INFRASTRUCTURE.Interfaces;
 using SocialMediaClean.INFRASTRUCTURE.Models;
 using SocialMediaClean.PERSISTANCE.Interfaces;

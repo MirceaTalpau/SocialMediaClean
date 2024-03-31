@@ -1,4 +1,4 @@
-﻿namespace LinkedFit.DOMAIN.Models.DTOs
+﻿namespace LinkedFit.DOMAIN.Models.DTOs.Auth
 {
     public class ResetTokenUserIdDTO
     {

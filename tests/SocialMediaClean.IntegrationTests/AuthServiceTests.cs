@@ -1,10 +1,10 @@
 using AutoFixture;
 using AutoMapper;
+using LinkedFit.DOMAIN.Models.DTOs.Auth;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Shouldly;
-using SocialMediaClean.APPLICATION.DTOs;
 using SocialMediaClean.APPLICATION.Mapper;
 using SocialMediaClean.APPLICATION.Requests;
 using SocialMediaClean.APPLICATION.Services;
