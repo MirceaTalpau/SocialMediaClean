@@ -1,8 +1,8 @@
 ﻿namespace LinkedFit.DOMAIN.Models.DTOs.Posts
 {
-    public class PicturesDTO
+    public class VideosDTO
     {
-        public IFormFile PictureFile { get; set; }
+        public IFormFile VideoFile { get; set; }
         public DateTime CreatedAt { get; set; }
     }
 }
