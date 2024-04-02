@@ -8,16 +8,22 @@ namespace LinkedFit.APPLICATION.Services
     public class PostService : IPostService
     {
         private readonly IPostRepository _postRepository;
-        private readonly UploadFiles uploadFiles = new UploadFiles();
+        //private readonly UploadFiles uploadFiles = new UploadFiles();
         public PostService(IPostRepository postRepository)
         {
             _postRepository = postRepository;
         }
-        public async Task<int> CreatePostNormalAsync(CreateNormalPostDTO post)
+
+        public Task<int> CreatePostNormalAsync(CreateNormalPostDTO post)
         {
-            var Pictures = await uploadFiles.UploadPicturesAsync(post.PicturesDTO);
-            post.Pictures = Pictures;
-            return await _postRepository.CreatePostNormalAsync(post);
+            throw new NotImplementedException();
         }
+
+        //public async Task<int> CreatePostNormalAsync(CreateNormalPostDTO post)
+        //{
+        //    var Pictures = await uploadFiles.UploadPicturesAsync(post.PicturesDTO);
+        //    post.Pictures = Pictures;
+        //    return await _postRepository.CreatePostNormalAsync(post);
+        //}
     }
 }

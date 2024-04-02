@@ -2,6 +2,7 @@
 using LinkedFit.APPLICATION.Services;
 using LinkedFit.DOMAIN.Models.DTOs.Posts;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SocialMediaClean.API.Controllers;
@@ -22,14 +23,14 @@ namespace LinkedFit.API.Controllers
             _logger = logger;
         }
         [HttpPost]
-        public async Task<IActionResult> CreatePostNormalAsync( string formData)
+        public async Task<IActionResult> CreatePostNormalAsync([FromForm] CreateNormalPostDTO formData)
         {
             try
             {
 
-                Console.WriteLine(formData);
+                Console.WriteLine(DateTime.Parse(formData.CreatedAt));
                 //var response = await _postService.CreatePostNormalAsync(post);
-                return Ok(formData);
+                return Ok(DateTime.Parse(formData.CreatedAt));
             }
             catch (Exception ex)
             {
