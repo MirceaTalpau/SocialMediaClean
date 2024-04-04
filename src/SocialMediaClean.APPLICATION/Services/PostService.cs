@@ -15,10 +15,16 @@ namespace LinkedFit.APPLICATION.Services
         }
         public async Task<int> CreatePostNormalAsync(CreateNormalPostDTO post)
         {
-            var Pictures = await uploadFiles.UploadPicturesAsync(post.PicturesDTO);
-            var Videos = await uploadFiles.UploadAndCompressVideosAsync(post.VideosDTO);
-            post.Videos = Videos;
-            post.Pictures = Pictures;
+            if(post.PicturesDTO != null)
+            {
+                var Pictures = await uploadFiles.UploadPicturesAsync(post.PicturesDTO);
+                post.Pictures = Pictures;
+            }
+            if (post.VideosDTO != null)
+            {
+                var Videos = await uploadFiles.UploadAndCompressVideosAsync(post.VideosDTO);
+                post.Videos = Videos;
+            }
             return await _postRepository.CreatePostNormalAsync(post);
         }
     }

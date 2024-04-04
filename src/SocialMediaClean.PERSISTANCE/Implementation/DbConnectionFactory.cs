@@ -16,8 +16,14 @@ namespace SocialMediaClean.INFRASTRUCTURE.Implementation
             var connectionString = _configuration.GetConnectionString("SocialMediaClean");
             var conn = new SqlConnection(connectionString);
             await conn.OpenAsync();
+            return conn;      
+        }
+        public SqlConnection CreateDbConnection()
+        {
+            var connectionString = _configuration.GetConnectionString("SocialMediaClean");
+            var conn = new SqlConnection(connectionString);
+            conn.Open();
             return conn;
-                
         }
     }
 }

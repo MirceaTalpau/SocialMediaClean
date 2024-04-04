@@ -10,7 +10,7 @@ using SocialMediaClean.API.Controllers;
 
 namespace LinkedFit.API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/post/")]
     [ApiController]
     [AllowAnonymous]
     public class PostController : ControllerBase
@@ -25,7 +25,7 @@ namespace LinkedFit.API.Controllers
             _logger = logger;
             _uploadFilesService = uploadFilesService;
         }
-        [HttpPost]
+        [HttpPost("normal")]
         public async Task<IActionResult> CreatePostNormalAsync([FromForm] CreateNormalPostDTO formData)
         {
             try

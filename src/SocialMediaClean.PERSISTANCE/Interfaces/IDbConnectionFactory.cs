@@ -5,5 +5,7 @@ namespace SocialMediaClean.INFRASTRUCTURE.Interfaces
     public interface IDbConnectionFactory
     {
         Task<SqlConnection> CreateDbConnectionAsync();
+        SqlConnection CreateDbConnection();
+
     }
 }

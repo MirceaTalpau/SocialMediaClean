@@ -11,6 +11,8 @@ namespace SocialMediaClean.PERSISTANCE
     {
         public static IServiceCollection AddPersistanceConfiguration(this IServiceCollection services)
         {
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
+
             services.AddSingleton<IDbConnectionFactory, DbConnectionFactory>();
             services.AddScoped<IAuthRepository, AuthRepository>();
             services.AddScoped<IAccountRepository, AccountRepository>();
