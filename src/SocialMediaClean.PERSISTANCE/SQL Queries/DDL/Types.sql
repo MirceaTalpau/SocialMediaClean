@@ -8,3 +8,10 @@ CREATE TYPE VideosTableType AS TABLE(
         VideoURI NVARCHAR(MAX),
         CreatedAt DATETIME
     )
+CREATE TYPE IngredientsTableType AS TABLE
+(
+    RecipeID INT,
+	Name VARCHAR(50),
+	Quantity INT,
+	Unit VARCHAR(50)
+)

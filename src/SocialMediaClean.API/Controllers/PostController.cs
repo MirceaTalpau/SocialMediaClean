@@ -42,5 +42,22 @@ namespace LinkedFit.API.Controllers
             }
 
         }
+        [HttpPost("recipe")]
+        public async Task<IActionResult> CreatePostRecipeAsync([FromForm] CreateRecipePostDTO formData)
+        {
+            try
+            {
+                Console.WriteLine(formData);
+                //var response = await _postService.CreatePostRecipeAsync(post);
+                await _postService.CreatePostRecipeAsync(formData);
+                return Ok(formData);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+
+        }
     }
 }
