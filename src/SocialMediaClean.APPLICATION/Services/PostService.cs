@@ -27,15 +27,37 @@ namespace LinkedFit.APPLICATION.Services
                 post.Videos = Videos;
             }
         }
+        private async Task DeleteUploadedFiles(CreateNormalPostDTO post)
+        {
+            await uploadFiles.DeleteUploadedFiles(post);
+        }
         public async Task<int> CreatePostNormalAsync(CreateNormalPostDTO post)
         {
-            await UploadFiles(post);
-            return await _postRepository.CreatePostNormalAsync(post);
+            try
+            {
+                await UploadFiles(post);
+                return await _postRepository.CreatePostNormalAsync(post);
+            }
+            catch (Exception)
+            {
+                await DeleteUploadedFiles(post);
+                throw;
+            }
+
         }
         public async Task<int> CreatePostRecipeAsync(CreateRecipePostDTO post)
         {
-            await UploadFiles(post);
-            return await _postRepository.CreatePostRecipeAsync(post);
+            try
+            {
+                await UploadFiles(post);
+                return await _postRepository.CreatePostRecipeAsync(post);
+            }
+            catch (Exception)
+            {
+                await DeleteUploadedFiles(post);
+                throw;
+            }
+
         }
     }
 }

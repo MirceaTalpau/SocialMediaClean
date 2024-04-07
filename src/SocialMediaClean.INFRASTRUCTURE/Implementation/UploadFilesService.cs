@@ -8,6 +8,30 @@ namespace LinkedFit.INFRASTRUCTURE.Implementation
 {
     public class UploadFilesService : IUploadFilesService
     {
+
+        public async Task DeleteUploadedFiles(CreateNormalPostDTO post)
+        {
+            if (post.Pictures != null)
+            {
+                foreach (var picture in post.Pictures)
+                {
+                    if (File.Exists(picture.PictureURI))
+                    {
+                        File.Delete(picture.PictureURI);
+                    }
+                }
+            }
+            if (post.Videos != null)
+            {
+                foreach (var video in post.Videos)
+                {
+                    if (File.Exists(video.VideoURI))
+                    {
+                        File.Delete(video.VideoURI);
+                    }
+                }
+            }
+        }
         public async Task<IEnumerable<Pictures>> UploadPicturesAsync(IEnumerable<PicturesDTO> list)
         {
             List<Pictures> Pictures = new List<Pictures>();

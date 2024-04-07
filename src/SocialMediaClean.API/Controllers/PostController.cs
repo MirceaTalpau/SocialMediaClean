@@ -49,7 +49,24 @@ namespace LinkedFit.API.Controllers
             {
                 Console.WriteLine(formData);
                 //var response = await _postService.CreatePostRecipeAsync(post);
-                await _postService.CreatePostRecipeAsync(formData);
+                var postId = await _postService.CreatePostRecipeAsync(formData);
+                return Ok(formData);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+
+        }
+        [HttpPost("progress")]
+        public async Task<IActionResult> CreatePostProgressAsync([FromForm] CreateProgressPostDTO formData)
+        {
+            try
+            {
+                Console.WriteLine(formData);
+                //var response = await _postService.CreatePostProgressAsync(post);
+                //await _postService.CreatePostProgressAsync(formData);
                 return Ok(formData);
             }
             catch (Exception ex)
