@@ -32,6 +32,42 @@ namespace LinkedFit.INFRASTRUCTURE.Implementation
                 }
             }
         }
+
+        public async Task DeletePicture(string pictureUri)
+        {
+            if (File.Exists(pictureUri))
+            {
+                File.Delete(pictureUri);
+            }
+        }
+
+        public async Task<string> UploadPictureAsync(IFormFile file)
+        {
+            var fileName = Path.GetFileName(file.FileName);
+            var baseFileName = Path.GetFileNameWithoutExtension(fileName);
+            var fileExtension = Path.GetExtension(fileName);
+
+            var counter = 1;
+            var timestamp = DateTime.Now.ToString("yyyyMMddHHmmss");
+            var newFileName = $"{baseFileName}_{timestamp}_{counter}{fileExtension}";
+            var filePath = Path.Combine(@"C:\Storage\Pictures", newFileName);
+
+            // Check if file with the same name already exists
+            while (File.Exists(filePath))
+            {
+                counter++;
+                newFileName = $"{baseFileName}_{timestamp}_{counter}{fileExtension}";
+                filePath = Path.Combine(@"C:\Storage\Pictures", newFileName);
+            }
+
+            using (var fileStream = new FileStream(filePath, FileMode.Create))
+            {
+                await file.CopyToAsync(fileStream);
+            }
+            var fullPath = filePath; // Using the same path for PictureURI
+            return fullPath;
+        }
+
         public async Task<IEnumerable<Pictures>> UploadPicturesAsync(IEnumerable<PicturesDTO> list)
         {
             List<Pictures> Pictures = new List<Pictures>();

@@ -66,7 +66,7 @@ namespace LinkedFit.API.Controllers
             {
                 Console.WriteLine(formData);
                 //var response = await _postService.CreatePostProgressAsync(post);
-                //await _postService.CreatePostProgressAsync(formData);
+                await _postService.CreatePostProgressAsync(formData);
                 return Ok(formData);
             }
             catch (Exception ex)

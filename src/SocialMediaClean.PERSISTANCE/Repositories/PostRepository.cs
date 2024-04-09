@@ -16,6 +16,7 @@ namespace LinkedFit.PERSISTANCE.Repositories
         private readonly string INSERT_POST_MEDIA = "usp_Post_InsertPostMedia";
         private readonly string CREATE_POST_RECIPE = "usp_Post_CreateRecipePost";
         private readonly string INSERT_RECIPE_INGREDIENTS = "usp_Post_InsertRecipeIngredients";
+        private readonly string CREATE_POST_PROGRESS = "usp_Post_CreateProgressPost";
 
         public PostRepository(IDbConnectionFactory db)
         {
@@ -279,6 +280,47 @@ namespace LinkedFit.PERSISTANCE.Repositories
                         var ingredientParameters = new DynamicParameters();
                         ingredientParameters.Add("@Ingredients", dataTableIngredients.AsTableValuedParameter("IngredientsTableType"));
                         await _unitOfWork.Connection.QueryAsync(INSERT_RECIPE_INGREDIENTS, ingredientParameters, _unitOfWork.Transaction, commandType: CommandType.StoredProcedure);
+                        _unitOfWork.Commit();
+                    }
+                    return postId;
+                }
+                catch (Exception)
+                {
+                    _unitOfWork.Rollback();
+                    return 0;
+                    throw;
+                }
+            }
+        }
+
+        public async Task<int> CreatePostProgressAsync(CreateProgressPostDTO post)
+        {
+            using (var _unitOfWork = new UnitOfWork(_db))
+            {
+                try
+                {
+                    var postId = await TryInsertNormalPostAsync(post, _unitOfWork);
+                    // If there are no pictures or videos, commit and return post ID
+                    //MODIFICA AICI
+                    //postId = await InsertMediaFilesAsync(post, postId, _unitOfWork);
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@PostID", postId);
+                    parameters.Add("@BeforeWeight", Int32.Parse(post.BeforeWeight));
+                    parameters.Add("@AfterWeight", Int32.Parse(post.AfterWeight));
+                    parameters.Add("@BeforePictureUri", post.BeforePictureUri);
+                    parameters.Add("@AfterPictureUri", post.AfterPictureUri);
+                    parameters.Add("@BeforeDate", DateTime.Parse(post.BeforeDate));
+                    parameters.Add("@AfterDate", DateTime.Parse(post.AfterDate));
+                    parameters.Add("ID", dbType: DbType.Int32, direction: ParameterDirection.Output);
+                    await _unitOfWork.Connection.QueryAsync<int>(CREATE_POST_PROGRESS, parameters, _unitOfWork.Transaction, commandType: CommandType.StoredProcedure);
+                    var progressId = parameters.Get<int>("ID");
+                    if (progressId == 0)
+                    {
+                        _unitOfWork.Rollback();
+                        return 0;
+                    }
+                    else
+                    {
                         _unitOfWork.Commit();
                     }
                     return postId;

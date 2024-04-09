@@ -9,6 +9,10 @@ namespace LinkedFit.INFRASTRUCTURE.Interfaces
 
         public Task<IEnumerable<Videos>> UploadAndCompressVideosAsync(IEnumerable<VideosDTO> list);
         public Task DeleteUploadedFiles(CreateNormalPostDTO post);
+        public Task<string> UploadPictureAsync(IFormFile file);
+        public Task DeletePicture(string pictureUri);
+
+
 
     }
 }

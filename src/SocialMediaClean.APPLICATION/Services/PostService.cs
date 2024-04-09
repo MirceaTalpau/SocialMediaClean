@@ -59,5 +59,23 @@ namespace LinkedFit.APPLICATION.Services
             }
 
         }
+
+        public async Task<int> CreatePostProgressAsync(CreateProgressPostDTO post)
+        {
+            try
+            {
+                var beforePicture = await uploadFiles.UploadPictureAsync(post.BeforePicture);
+                post.BeforePictureUri = beforePicture;
+                var afterPicture = await uploadFiles.UploadPictureAsync(post.AfterPicture);
+                post.AfterPictureUri = afterPicture;
+                return await _postRepository.CreatePostProgressAsync(post);
+            }
+            catch (Exception)
+            {
+                await DeleteUploadedFiles(post);
+                throw;
+            }
+
+        }
     }
 }
