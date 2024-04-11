@@ -201,7 +201,7 @@ namespace LinkedFit.PERSISTANCE.Repositories
                 parameters.Add("@Body", post.Body);
                 parameters.Add("@StatusID", post.StatusID);
                 parameters.Add("ID", dbType: DbType.Int32, direction: ParameterDirection.Output);
-                await unitOfWork.Connection.QueryAsync<int>(CREATE_POST_NORMAL, parameters, unitOfWork.Transaction, commandType: CommandType.StoredProcedure);
+                await unitOfWork.Connection.QueryAsync(CREATE_POST_NORMAL, parameters, unitOfWork.Transaction, commandType: CommandType.StoredProcedure);
                 int postId = parameters.Get<int>("ID");
                 return postId;
             }
@@ -303,6 +303,11 @@ namespace LinkedFit.PERSISTANCE.Repositories
                     // If there are no pictures or videos, commit and return post ID
                     //MODIFICA AICI
                     //postId = await InsertMediaFilesAsync(post, postId, _unitOfWork);
+                    if(postId == 0)
+                    {
+                        _unitOfWork.Rollback();
+                        return 0;
+                    }
                     var parameters = new DynamicParameters();
                     parameters.Add("@PostID", postId);
                     parameters.Add("@BeforeWeight", Int32.Parse(post.BeforeWeight));

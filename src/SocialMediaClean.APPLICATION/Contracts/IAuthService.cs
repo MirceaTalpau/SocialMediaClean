@@ -9,6 +9,8 @@ namespace SocialMediaClean.APPLICATION.Contracts
         Task<LoginResponse> LoginUserAsync(LoginRequest loginRequest);
         Task<RegisterResponse> RegisterUserAsync(RegisterRequest registerRequest);
         Task<LoginResponse> LogOrRegisterGmailUserAsync(RegisterRequestDTO req);
+        Task<bool> IsJwtValid(string token);
+
 
     }
 }
