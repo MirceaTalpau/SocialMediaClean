@@ -17,6 +17,7 @@ namespace LinkedFit.PERSISTANCE.Repositories
         private readonly string CREATE_POST_RECIPE = "usp_Post_CreateRecipePost";
         private readonly string INSERT_RECIPE_INGREDIENTS = "usp_Post_InsertRecipeIngredients";
         private readonly string CREATE_POST_PROGRESS = "usp_Post_CreateProgressPost";
+        private readonly string CHECK_IF_USER_EXISTS = "usp_User_CheckIfUserExists";
 
         public PostRepository(IDbConnectionFactory db)
         {
@@ -149,6 +150,31 @@ namespace LinkedFit.PERSISTANCE.Repositories
         //    }
 
         //}
+        private async Task<int> VerifyUserExistsAsync(int userID)
+        {
+            //using( var unitOfWork = new UnitOfWork(_db))
+            //{
+            //    var parameters = new DynamicParameters();
+            //    parameters.Add("@ID", userID);
+            //    var count = await unitOfWork.Connection.QuerySingleAsync<int>(CHECK_IF_USER_EXISTS, parameters, unitOfWork.Transaction, commandType: CommandType.StoredProcedure);
+            //    return count;
+            //}
+            try
+            {
+                using( var conn = await _db.CreateDbConnectionAsync())
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@ID", userID);
+                    var count = await conn.QuerySingleAsync<int>(CHECK_IF_USER_EXISTS, parameters, commandType: CommandType.StoredProcedure);
+                    return count;
+                }
+            }
+            catch (Exception)
+            {
+                return 0;
+                throw;
+            }
+        }
 
         private async Task<int> InsertMediaFilesAsync(CreateNormalPostDTO post,int postId, UnitOfWork unitOfWork)
         {
@@ -208,7 +234,6 @@ namespace LinkedFit.PERSISTANCE.Repositories
             catch (Exception)
             {
                 unitOfWork.Rollback();
-                return 0;
                 throw;
             }
 
@@ -299,7 +324,17 @@ namespace LinkedFit.PERSISTANCE.Repositories
             {
                 try
                 {
+                    //var userExists = await VerifyUserExistsAsync(post.AuthorID);
+                    //if (userExists == 0)
+                    //{
+                    //    throw new Exception("User does not exist.");
+                    //}
                     var postId = await TryInsertNormalPostAsync(post, _unitOfWork);
+                    //if(postId == 0)
+                    //{
+                    //    _unitOfWork.Rollback();
+                    //    return 0;
+                    //}
                     // If there are no pictures or videos, commit and return post ID
                     //MODIFICA AICI
                     //postId = await InsertMediaFilesAsync(post, postId, _unitOfWork);
@@ -328,7 +363,6 @@ namespace LinkedFit.PERSISTANCE.Repositories
                 catch (Exception)
                 {
                     _unitOfWork.Rollback();
-                    return 0;
                     throw;
                 }
             }

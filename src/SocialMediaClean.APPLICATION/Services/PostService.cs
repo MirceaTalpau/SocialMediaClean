@@ -68,7 +68,12 @@ namespace LinkedFit.APPLICATION.Services
                 post.BeforePictureUri = beforePicture;
                 var afterPicture = await uploadFiles.UploadPictureAsync(post.AfterPicture);
                 post.AfterPictureUri = afterPicture;
-                return await _postRepository.CreatePostProgressAsync(post);
+                var postId = await _postRepository.CreatePostProgressAsync(post);
+                if(postId == 0)
+                {
+                    await uploadFiles.DeleteUploadedFiles(post);
+                }
+                return postId;
             }
             catch (Exception)
             {
