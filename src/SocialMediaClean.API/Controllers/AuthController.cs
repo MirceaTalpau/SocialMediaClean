@@ -89,6 +89,18 @@ namespace SocialMediaClean.API.Controllers
                 throw;
             }
         }
+        [Authorize]
+        [HttpGet("validate-jwt")]
+        public async Task<ActionResult<bool>> IsJwtValid()
+        {
+            var accessToken = HttpContext.Request.Headers["accessToken"];
+            var response = await _authService.IsJwtValid(accessToken.ToString());
+            if (response==false)
+            {
+                return Unauthorized(response);
+            }
+            return Ok(response);
+        }
 
     }
 }

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using LinkedFit.APPLICATION.Validators;
 using LinkedFit.DOMAIN.Models.DTOs.Auth;
 using Microsoft.IdentityModel.Tokens;
 using SocialMediaClean.APPLICATION.Contracts;
@@ -268,6 +269,12 @@ namespace SocialMediaClean.APPLICATION.Services
                 response.Token = GenerateToken(exists.ID);
                 return response;
             }
+        }
+
+        public async Task<bool> IsJwtValid(string token)
+        {
+            JwtValidator validator = new JwtValidator(_config);
+            return validator.IsJwtValid(token);
         }
 
     }
