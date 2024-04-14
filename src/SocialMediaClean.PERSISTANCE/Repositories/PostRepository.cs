@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using LinkedFit.DOMAIN.Models.DTOs.Posts;
 using LinkedFit.DOMAIN.Models.Entities.Posts;
+using LinkedFit.DOMAIN.Models.Views;
 using LinkedFit.PERSISTANCE.Interfaces;
 using SocialMediaClean.INFRASTRUCTURE.Interfaces;
 using System;
@@ -18,6 +19,7 @@ namespace LinkedFit.PERSISTANCE.Repositories
         private readonly string INSERT_RECIPE_INGREDIENTS = "usp_Post_InsertRecipeIngredients";
         private readonly string CREATE_POST_PROGRESS = "usp_Post_CreateProgressPost";
         private readonly string GET_ALL_NORMAL_POSTS = "usp_Post_GetAllNormalPosts";
+        private readonly string GET_ALL_RECIPE_POSTS = "usp_Post_GetAllRecipePosts";
 
         public PostRepository(IDbConnectionFactory db)
         {
@@ -244,6 +246,25 @@ namespace LinkedFit.PERSISTANCE.Repositories
                 catch (Exception)
                 {
                     _unitOfWork.Rollback();
+                    throw;
+                }
+            }
+        }
+        public async Task<IEnumerable<RecipePostView>> GetAllRecipePosts()
+        {
+            using (var conn = await _db.CreateDbConnectionAsync())
+            {
+                try
+                {
+                    IEnumerable<RecipePostView> posts = await conn.QueryAsync<RecipePostView>(GET_ALL_RECIPE_POSTS, commandType: CommandType.StoredProcedure);
+                    if (posts == null)
+                    {
+                        return null;
+                    }
+                    return posts;
+                }
+                catch (Exception)
+                {
                     throw;
                 }
             }

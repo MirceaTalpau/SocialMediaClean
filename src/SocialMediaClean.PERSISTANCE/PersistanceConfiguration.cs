@@ -19,6 +19,7 @@ namespace SocialMediaClean.PERSISTANCE
 
             ////////POSTS
             services.AddScoped<IPostRepository, PostRepository>();
+
             return services;
         }
     }
