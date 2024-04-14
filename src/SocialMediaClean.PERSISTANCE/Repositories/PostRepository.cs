@@ -179,7 +179,17 @@ namespace LinkedFit.PERSISTANCE.Repositories
             {
                 try
                 {
+                    //var userExists = await VerifyUserExistsAsync(post.AuthorID);
+                    //if (userExists == 0)
+                    //{
+                    //    throw new Exception("User does not exist.");
+                    //}
                     var postId = await TryInsertNormalPostAsync(post, _unitOfWork);
+                    //if(postId == 0)
+                    //{
+                    //    _unitOfWork.Rollback();
+                    //    return 0;
+                    //}
                     // If there are no pictures or videos, commit and return post ID
                     //MODIFICA AICI
                     //postId = await InsertMediaFilesAsync(post, postId, _unitOfWork);
@@ -213,7 +223,6 @@ namespace LinkedFit.PERSISTANCE.Repositories
                 catch (Exception)
                 {
                     _unitOfWork.Rollback();
-                    return 0;
                     throw;
                 }
             }

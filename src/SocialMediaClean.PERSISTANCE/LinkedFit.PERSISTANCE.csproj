@@ -16,4 +16,8 @@
     <ProjectReference Include="..\SocialMediaClean.DOMAIN\LinkedFit.DOMAIN.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="SQL Queries\Procedures\Users\" />
+  </ItemGroup>
+
 </Project>
