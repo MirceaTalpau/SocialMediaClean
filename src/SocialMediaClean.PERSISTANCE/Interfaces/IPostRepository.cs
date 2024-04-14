@@ -1,5 +1,5 @@
 ﻿using LinkedFit.DOMAIN.Models.DTOs.Posts;
-using LinkedFit.DOMAIN.Models.Entities;
+using LinkedFit.DOMAIN.Models.Entities.Posts;
 
 namespace LinkedFit.PERSISTANCE.Interfaces
 {

@@ -1,6 +1,6 @@
 ﻿using Dapper;
 using LinkedFit.DOMAIN.Models.DTOs.Posts;
-using LinkedFit.DOMAIN.Models.Entities;
+using LinkedFit.DOMAIN.Models.Entities.Posts;
 using LinkedFit.PERSISTANCE.Interfaces;
 using SocialMediaClean.INFRASTRUCTURE.Interfaces;
 using System;
