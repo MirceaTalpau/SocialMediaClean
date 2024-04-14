@@ -2,13 +2,13 @@
 {
     public class CreateProgressPostDTO : CreateNormalPostDTO
     {
-        public string BeforeWeight { get; set; }
-        public string AfterWeight { get; set; }
-        public IFormFile BeforePicture { get; set; }
-        public string BeforePictureUri { get; set; }
-        public IFormFile AfterPicture { get; set; }
-        public string AfterPictureUri { get; set; }
-        public string BeforeDate { get; set; }
-        public string AfterDate { get; set; }
+        public string BeforeWeight { get; set; } = default!;
+        public string AfterWeight { get; set; } = default!;
+        public IFormFile BeforePicture { get; set; } = default!;
+        public string BeforePictureUri { get; set; } = default!;
+        public IFormFile AfterPicture { get; set; } = default!;
+        public string AfterPictureUri { get; set; } = default!;
+        public string BeforeDate { get; set; } = default!;
+        public string AfterDate { get; set; } = default!;
     }
 }

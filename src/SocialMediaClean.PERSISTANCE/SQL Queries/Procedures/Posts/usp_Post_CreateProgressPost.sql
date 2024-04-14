@@ -11,8 +11,8 @@
 AS
 
 BEGIN
-	INSERT INTO Progress (BeforeWeight, AfterWeight, BeforePictureUri, AfterPictureUri, BeforeDate, AfterDate)
-	VALUES (@BeforeWeight, @AfterWeight, @BeforePictureUri, @AfterPictureUri, @BeforeDate, @AfterDate)
+	INSERT INTO Progress (PostID,BeforeWeight, AfterWeight, BeforePictureUri, AfterPictureUri, BeforeDate, AfterDate)
+	VALUES (@PostID,@BeforeWeight, @AfterWeight, @BeforePictureUri, @AfterPictureUri, @BeforeDate, @AfterDate)
 	SET @ID = SCOPE_IDENTITY();
 END
 
