@@ -1,11 +1,14 @@
 ﻿using LinkedFit.APPLICATION.Contracts;
+using LinkedFit.DOMAIN.Models.Entities.Posts;
 using LinkedFit.DOMAIN.Models.Views;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LinkedFit.API.Controllers
-{
-    [Route("api/[controller]")]
+{ 
+    [Route("api/v1/feed/")]
+    [AllowAnonymous]
     [ApiController]
     public class FeedController : ControllerBase
     {
@@ -16,12 +19,28 @@ namespace LinkedFit.API.Controllers
             _feedService = feedService;
             _logger = logger;
         }
-        [HttpGet]
-        public async Task<IActionResult> GetRecipeFeed()
+        [HttpGet("normal")]
+        public async Task<IActionResult> GetAllPublicNormalPosts()
         {
             try
             {
-                IEnumerable<RecipePostView> posts = await _feedService.GetAllRecipePosts();
+            var posts = await _feedService.GetAllPublicNormalPosts();
+            var post = posts.FirstOrDefault();
+            return Ok(post);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, "Error retrieving data from the database");
+            }
+        }
+
+        [HttpGet("recipe")]
+        public async Task<IActionResult> GetAllPublicRecipeFeed()
+        {
+            try
+            {
+                var posts = await _feedService.GetAllRecipePosts();
                 var post = posts.FirstOrDefault();
                 return Ok(post);
             }

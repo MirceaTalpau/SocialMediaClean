@@ -1,4 +1,5 @@
 ﻿using LinkedFit.APPLICATION.Contracts;
+using LinkedFit.DOMAIN.Models.Entities.Posts;
 using LinkedFit.DOMAIN.Models.Views;
 using LinkedFit.PERSISTANCE.Interfaces;
 
@@ -12,7 +13,18 @@ namespace LinkedFit.APPLICATION.Services
         {
             _postRepository = postRepository;
         }
-
+        public async Task<IEnumerable<Post>> GetAllPublicNormalPosts()
+        {
+            try
+            {
+                var posts = await _postRepository.GetAllNormalPosts();
+                return posts;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
         public async Task<IEnumerable<RecipePostView>> GetAllRecipePosts()
         {
             try

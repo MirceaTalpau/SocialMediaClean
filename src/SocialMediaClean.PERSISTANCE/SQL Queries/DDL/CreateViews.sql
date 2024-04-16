@@ -13,6 +13,20 @@ INNER JOIN Users u
 ON p.AuthorID = u.ID
 INNER JOIN Users us
 ON p.AuthorID = us.ID
+INNER JOIN Statuses s 
+ON p.StatusID = s.ID
+WHERE s.Status = 'Public'
+
+CREATE OR ALTER VIEW NormalPost
+AS
+SELECT p.ID AS PostID,p.AuthorID,p.StatusID,p.GroupID,p.SharedByID,p.Body,p.CreatedAt,
+u.FirstName + ' ' + u.LastName AS AuthorName, u.ProfilePictureURL
+FROM Posts p
+INNER JOIN Users u
+ON p.AuthorID = u.ID
+INNER JOIN Statuses s
+ON p.StatusID = s.ID
+WHERE s.Status = 'Public'
 
 CREATE VIEW ProgressPost
 AS
