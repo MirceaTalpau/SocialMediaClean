@@ -6,6 +6,6 @@ namespace LinkedFit.APPLICATION.Contracts
     public interface IFeedService
     {
         Task<IEnumerable<RecipePostView>> GetAllRecipePosts();
-        Task<IEnumerable<Post>> GetAllPublicNormalPosts();
+        Task<IEnumerable<NormalPostView>> GetAllPublicNormalPosts();
     }
 }

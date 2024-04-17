@@ -1,9 +1,0 @@
-﻿CREATE OR ALTER PROCEDURE usp_Post_GetNormalPosts
-AS
-SELECT Posts.*
-FROM Posts
-LEFT JOIN PROGRESS ON Posts.ID = PROGRESS.PostID
-LEFT JOIN Recipe ON Posts.ID = Recipe.PostID
-WHERE PROGRESS.PostID IS NULL
-AND Recipe.PostID IS NULL
-ORDER BY Posts.CreatedAt DESC;

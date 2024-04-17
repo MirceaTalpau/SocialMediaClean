@@ -1,0 +1,6 @@
+CREATE OR ALTER PROCEDURE usp_Post_GetMediaPost
+@PostID INT
+AS
+SELECT *
+FROM MediaPost
+WHERE PostID = @PostID

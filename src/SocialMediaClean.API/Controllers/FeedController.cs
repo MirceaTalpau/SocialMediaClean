@@ -25,8 +25,7 @@ namespace LinkedFit.API.Controllers
             try
             {
             var posts = await _feedService.GetAllPublicNormalPosts();
-            var post = posts.FirstOrDefault();
-            return Ok(post);
+            return Ok(posts);
             }
             catch (Exception ex)
             {

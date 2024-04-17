@@ -13,7 +13,7 @@ namespace LinkedFit.APPLICATION.Services
         {
             _postRepository = postRepository;
         }
-        public async Task<IEnumerable<Post>> GetAllPublicNormalPosts()
+        public async Task<IEnumerable<NormalPostView>> GetAllPublicNormalPosts()
         {
             try
             {

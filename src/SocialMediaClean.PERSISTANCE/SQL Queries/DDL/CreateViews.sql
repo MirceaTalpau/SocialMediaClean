@@ -17,6 +17,16 @@ INNER JOIN Statuses s
 ON p.StatusID = s.ID
 WHERE s.Status = 'Public'
 
+CREATE VIEW NormalPost
+AS
+SELECT Posts.*
+FROM Posts
+LEFT JOIN PROGRESS ON Posts.ID = PROGRESS.PostID
+LEFT JOIN Recipe ON Posts.ID = Recipe.PostID
+WHERE PROGRESS.PostID IS NULL
+AND Recipe.PostID IS NULL
+ORDER BY Posts.CreatedAt DESC;
+
 CREATE OR ALTER VIEW NormalPost
 AS
 SELECT p.ID AS PostID,p.AuthorID,p.StatusID,p.GroupID,p.SharedByID,p.Body,p.CreatedAt,
@@ -35,3 +45,13 @@ pr.BeforeWeight,pr.AfterWeight,pr.BeforePictureURI,pr.AfterPictureURI,pr.BeforeD
 FROM Posts p
 INNER JOIN Progress pr
 ON p.ID = pr.PostID
+
+
+CREATE OR ALTER VIEW MediaPost
+AS
+SELECT po.ID AS PostID, pi.CreatedAt AS PictureCreatedAt,pi.PictureURI,v.CreatedAt AS VideoCreatedAt,v.VideoURI
+FROM Posts po
+LEFT JOIN Pictures pi
+ON po.ID  =pi.PostID
+LEFT JOIN Videos v
+ON v.PostID = po.ID

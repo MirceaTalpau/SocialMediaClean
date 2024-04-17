@@ -18,8 +18,11 @@ namespace LinkedFit.PERSISTANCE.Repositories
         private readonly string CREATE_POST_RECIPE = "usp_Post_CreateRecipePost";
         private readonly string INSERT_RECIPE_INGREDIENTS = "usp_Post_InsertRecipeIngredients";
         private readonly string CREATE_POST_PROGRESS = "usp_Post_CreateProgressPost";
-        private readonly string GET_ALL_NORMAL_POSTS = "usp_Post_GetAllNormalPosts";
+
+        private readonly string GET_ALL_NORMAL_POSTS = "usp_Post_GetNormalPosts";
         private readonly string GET_ALL_RECIPE_POSTS = "usp_Post_GetAllRecipePosts";
+        private readonly string GET_MEDIA_POST = "usp_Post_GetMediaPost";
+
 
         public PostRepository(IDbConnectionFactory db)
         {
@@ -187,15 +190,15 @@ namespace LinkedFit.PERSISTANCE.Repositories
                     //    throw new Exception("User does not exist.");
                     //}
                     var postId = await TryInsertNormalPostAsync(post, _unitOfWork);
-                    //if(postId == 0)
-                    //{
-                    //    _unitOfWork.Rollback();
-                    //    return 0;
-                    //}
+                    if (postId == 0)
+                    {
+                        _unitOfWork.Rollback();
+                        return 0;
+                    }
                     // If there are no pictures or videos, commit and return post ID
                     //MODIFICA AICI
-                    //postId = await InsertMediaFilesAsync(post, postId, _unitOfWork);
-                    if(postId == 0)
+                    postId = await InsertMediaFilesAsync(post, postId, _unitOfWork);
+                    if (postId == 0)
                     {
                         _unitOfWork.Rollback();
                         return 0;
@@ -229,23 +232,21 @@ namespace LinkedFit.PERSISTANCE.Repositories
                 }
             }
         }
-        public async Task<IEnumerable<Post>> GetAllNormalPosts()
+        public async Task<IEnumerable<NormalPostView>> GetAllNormalPosts()
         {
-            using (var _unitOfWork = new UnitOfWork(_db))
+            using (var _unitOfWork = await _db.CreateDbConnectionAsync())
             {
                 try
                 {
-                    IEnumerable<Post> posts = await _unitOfWork.Connection.QueryAsync<Post>(GET_ALL_NORMAL_POSTS, commandType: CommandType.StoredProcedure);
+                    IEnumerable<NormalPostView> posts = await _unitOfWork.QueryAsync<NormalPostView>(GET_ALL_NORMAL_POSTS, commandType: CommandType.StoredProcedure);
                     if (posts == null)
                     {
-                        _unitOfWork.Rollback();
-                        return null;
+                        throw new Exception();
                     }
                     return posts;
                 }
                 catch (Exception)
                 {
-                    _unitOfWork.Rollback();
                     throw;
                 }
             }
@@ -259,7 +260,7 @@ namespace LinkedFit.PERSISTANCE.Repositories
                     IEnumerable<RecipePostView> posts = await conn.QueryAsync<RecipePostView>(GET_ALL_RECIPE_POSTS, commandType: CommandType.StoredProcedure);
                     if (posts == null)
                     {
-                        return null;
+                        throw new Exception();
                     }
                     return posts;
                 }
@@ -268,6 +269,29 @@ namespace LinkedFit.PERSISTANCE.Repositories
                     throw;
                 }
             }
+        }
+
+        public async Task<IEnumerable<MediaPostView>> GetMediaPost(int postId)
+        {
+            using (var conn = await _db.CreateDbConnectionAsync())
+            {
+                try
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@PostID", postId);
+                    IEnumerable<MediaPostView> media = await conn.QueryAsync<MediaPostView>(GET_MEDIA_POST, parameters, commandType: CommandType.StoredProcedure);
+                    if (media == null)
+                    {
+                        throw new Exception();
+                    }
+                    return media;
+                }
+                catch (Exception)
+                {
+                    throw;
+                }
+            }
+
         }
     }
 
