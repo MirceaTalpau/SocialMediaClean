@@ -11,6 +11,8 @@ namespace LinkedFit.PERSISTANCE.Interfaces
         public Task<int> CreatePostProgressAsync(CreateProgressPostDTO post);
         public Task<IEnumerable<NormalPostView>> GetAllNormalPosts();
         public Task<IEnumerable<RecipePostView>> GetAllRecipePosts();
+        public Task<IEnumerable<MediaPostView>> GetMediaPost(int postId);
+
 
 
     }

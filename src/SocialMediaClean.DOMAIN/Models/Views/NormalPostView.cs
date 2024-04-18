@@ -13,5 +13,6 @@
         public string AuthorProfilePictureURL { get; set; }
         public string SharedBy { get; set; }
         public string SharedByProfilePictureURL { get; set; }
+        public IEnumerable<MediaPostView> Media { get; set; }
     }
 }

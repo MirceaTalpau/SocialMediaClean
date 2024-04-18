@@ -3,9 +3,9 @@
     public class MediaPostView
     {
         public int PostID { get; set; }
-        DateTime PictureCreatedAt { get; set; }
-        string PictureURI { get; set; }
-        DateTime VideoCreatedAt { get; set; }
-        string VideoURI { get; set; }
+        public DateTime PictureCreatedAt { get; set; } = default!;
+        public string PictureURI { get; set; } = default!;
+        public DateTime VideoCreatedAt { get; set; } = default!;
+        public string VideoURI { get; set; } = default!;
     }
 }

@@ -20,6 +20,7 @@ namespace LinkedFit.PERSISTANCE.Repositories
         private readonly string CREATE_POST_PROGRESS = "usp_Post_CreateProgressPost";
 
         private readonly string GET_ALL_NORMAL_POSTS = "usp_Post_GetNormalPosts";
+        private readonly string GET_ALL_PUBLIC_NORMAL_POSTS = "usp_Post_GetPublicNormalPosts";
         private readonly string GET_ALL_RECIPE_POSTS = "usp_Post_GetAllRecipePosts";
         private readonly string GET_MEDIA_POST = "usp_Post_GetMediaPost";
 
@@ -32,44 +33,51 @@ namespace LinkedFit.PERSISTANCE.Repositories
         
         private async Task<int> InsertMediaFilesAsync(CreateNormalPostDTO post,int postId, UnitOfWork unitOfWork)
         {
-            if (post.Pictures == null && post.Videos == null)
-            {
-                return postId;
-            }
-
-            var mediaParameters = new DynamicParameters();
-
-            // Process pictures if available
-            if (post.Pictures != null)
-            {
-                DataTable dataTablePictures = new DataTable();
-                dataTablePictures.Columns.Add("PostID", typeof(int));
-                dataTablePictures.Columns.Add("PictureURI", typeof(string));
-                dataTablePictures.Columns.Add("CreatedAt", typeof(DateTime));
-                foreach (var picture in post.Pictures)
+            try { 
+                if (post.Pictures == null && post.Videos == null)
                 {
-                    dataTablePictures.Rows.Add(postId, picture.PictureURI, picture.CreatedAt);
+                    return postId;
                 }
-                mediaParameters.Add("@Pictures", dataTablePictures.AsTableValuedParameter("PicturesTableType"));
-            }
 
-            // Process videos if available
-            if (post.Videos != null)
-            {
-                DataTable dataTableVideos = new DataTable();
-                dataTableVideos.Columns.Add("PostID", typeof(int));
-                dataTableVideos.Columns.Add("VideoURI", typeof(string));
-                dataTableVideos.Columns.Add("CreatedAt", typeof(DateTime));
-                foreach (var video in post.Videos)
+                var mediaParameters = new DynamicParameters();
+
+                // Process pictures if available
+                if (post.Pictures != null)
                 {
-                    dataTableVideos.Rows.Add(postId, video.VideoURI, video.CreatedAt);
+                    DataTable dataTablePictures = new DataTable();
+                    dataTablePictures.Columns.Add("PostID", typeof(int));
+                    dataTablePictures.Columns.Add("PictureURI", typeof(string));
+                    dataTablePictures.Columns.Add("CreatedAt", typeof(DateTime));
+                    foreach (var picture in post.Pictures)
+                    {
+                        dataTablePictures.Rows.Add(postId, picture.PictureURI, picture.CreatedAt);
+                    }
+                    mediaParameters.Add("@Pictures", dataTablePictures.AsTableValuedParameter("PicturesTableType"));
                 }
-                mediaParameters.Add("@Videos", dataTableVideos.AsTableValuedParameter("VideosTableType"));
+
+                // Process videos if available
+                if (post.Videos != null)
+                {
+                    DataTable dataTableVideos = new DataTable();
+                    dataTableVideos.Columns.Add("PostID", typeof(int));
+                    dataTableVideos.Columns.Add("VideoURI", typeof(string));
+                    dataTableVideos.Columns.Add("CreatedAt", typeof(DateTime));
+                    foreach (var video in post.Videos)
+                    {
+                        dataTableVideos.Rows.Add(postId, video.VideoURI, video.CreatedAt);
+                    }
+                    mediaParameters.Add("@Videos", dataTableVideos.AsTableValuedParameter("VideosTableType"));
             }
 
             // Execute the media insertion stored procedure within the same transaction
             await unitOfWork.Connection.QueryAsync(INSERT_POST_MEDIA, mediaParameters, unitOfWork.Transaction, commandType: CommandType.StoredProcedure);
             return postId;
+            }
+            catch (Exception)
+            {
+                return 0;
+                throw;
+            }
         }
 
         public async Task<int> TryInsertNormalPostAsync(CreateNormalPostDTO post,UnitOfWork unitOfWork)
@@ -88,7 +96,7 @@ namespace LinkedFit.PERSISTANCE.Repositories
             catch (Exception ex)
             {
                 unitOfWork.Rollback();
-                //return 0;
+                return 0;
                 throw ex;
             }
 
@@ -103,7 +111,7 @@ namespace LinkedFit.PERSISTANCE.Repositories
                     var postId = await TryInsertNormalPostAsync(post, unitOfWork);
                     // If there are no pictures or videos, commit and return post ID
                     postId = await InsertMediaFilesAsync(post, postId, unitOfWork);
-                    if(postId.GetType() == typeof(int))
+                    if(postId == 0)
                     {
                         unitOfWork.Rollback();
                         return 0;
@@ -238,7 +246,7 @@ namespace LinkedFit.PERSISTANCE.Repositories
             {
                 try
                 {
-                    IEnumerable<NormalPostView> posts = await _unitOfWork.QueryAsync<NormalPostView>(GET_ALL_NORMAL_POSTS, commandType: CommandType.StoredProcedure);
+                    IEnumerable<NormalPostView> posts = await _unitOfWork.QueryAsync<NormalPostView>(GET_ALL_PUBLIC_NORMAL_POSTS, commandType: CommandType.StoredProcedure);
                     if (posts == null)
                     {
                         throw new Exception();
