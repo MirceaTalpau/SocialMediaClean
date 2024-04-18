@@ -80,22 +80,26 @@ namespace LinkedFit.PERSISTANCE.Repositories
             }
         }
 
-        public async Task<int> TryInsertNormalPostAsync(CreateNormalPostDTO post,UnitOfWork unitOfWork)
+        public async Task<int> TryInsertNormalPostAsync(CreateNormalPostDTO post)
         {
             try
             {
-                var parameters = new DynamicParameters();
-                parameters.Add("@AuthorID", post.AuthorID);
-                parameters.Add("@Body", post.Body);
-                parameters.Add("@StatusID", post.StatusID);
-                parameters.Add("ID", dbType: DbType.Int32, direction: ParameterDirection.Output);
-                await unitOfWork.Connection.QueryAsync(CREATE_POST_NORMAL, parameters, unitOfWork.Transaction, commandType: CommandType.StoredProcedure);
-                int postId = parameters.Get<int>("ID");
-                return postId;
+                using (var conn = await _db.CreateDbConnectionAsync() )
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@AuthorID", post.AuthorID);
+                    parameters.Add("@Body", post.Body);
+                    parameters.Add("@StatusID", post.StatusID);
+                    parameters.Add("ID", dbType: DbType.Int32, direction: ParameterDirection.Output);
+                    await conn.QueryAsync(CREATE_POST_NORMAL, parameters, commandType: CommandType.StoredProcedure);
+                    int postId = parameters.Get<int>("ID");
+                    return postId;
+                }
+                
             }
             catch (Exception ex)
             {
-                unitOfWork.Rollback();
+                
                 return 0;
                 throw ex;
             }
@@ -108,7 +112,7 @@ namespace LinkedFit.PERSISTANCE.Repositories
             {
                 try
                 {
-                    var postId = await TryInsertNormalPostAsync(post, unitOfWork);
+                    var postId = await TryInsertNormalPostAsync(post);
                     // If there are no pictures or videos, commit and return post ID
                     postId = await InsertMediaFilesAsync(post, postId, unitOfWork);
                     if(postId == 0)
@@ -136,7 +140,7 @@ namespace LinkedFit.PERSISTANCE.Repositories
             {
                 try
                 {
-                    var postId = await TryInsertNormalPostAsync(post, _unitOfWork);
+                    var postId = await TryInsertNormalPostAsync(post);
                     // If there are no pictures or videos, commit and return post ID
                     postId = await InsertMediaFilesAsync(post, postId, _unitOfWork);
                     var parameters = new DynamicParameters();
@@ -197,7 +201,7 @@ namespace LinkedFit.PERSISTANCE.Repositories
                     //{
                     //    throw new Exception("User does not exist.");
                     //}
-                    var postId = await TryInsertNormalPostAsync(post, _unitOfWork);
+                    var postId = await TryInsertNormalPostAsync(post);
                     if (postId == 0)
                     {
                         _unitOfWork.Rollback();

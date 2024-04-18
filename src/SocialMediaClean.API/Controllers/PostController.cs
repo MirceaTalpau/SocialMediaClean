@@ -32,8 +32,8 @@ namespace LinkedFit.API.Controllers
             {
                 Console.WriteLine(formData);
                 //var response = await _postService.CreatePostNormalAsync(post);
-                await _postService.CreatePostNormalAsync(formData);
-                return Ok(formData);
+                var ceva =await _postService.CreatePostNormalAsync(formData);
+                return Ok(ceva);
             }
             catch (Exception ex)
             {
