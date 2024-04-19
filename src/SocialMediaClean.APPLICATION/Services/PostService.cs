@@ -29,7 +29,8 @@ namespace LinkedFit.APPLICATION.Services
         }
         private async Task DeleteUploadedFiles(CreateNormalPostDTO post)
         {
-            await uploadFiles.DeleteUploadedFiles(post);
+            
+           uploadFiles.DeleteUploadedFiles(post);
         }
         public async Task<int> CreatePostNormalAsync(CreateNormalPostDTO post)
         {
@@ -72,7 +73,7 @@ namespace LinkedFit.APPLICATION.Services
                 var postId = await _postRepository.CreatePostProgressAsync(post);
                 if(postId == 0)
                 {
-                    await uploadFiles.DeleteUploadedFiles(post);
+                    uploadFiles.DeleteUploadedFiles(post);
                 }
                 return postId;
             }

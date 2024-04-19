@@ -3,6 +3,7 @@ using LinkedFit.DOMAIN.Models.DTOs.Posts;
 using LinkedFit.DOMAIN.Models.Entities.Posts;
 using LinkedFit.DOMAIN.Models.Views;
 using LinkedFit.PERSISTANCE.Interfaces;
+using Microsoft.VisualBasic;
 using SocialMediaClean.INFRASTRUCTURE.Interfaces;
 using System;
 using System.Data;
@@ -75,7 +76,6 @@ namespace LinkedFit.PERSISTANCE.Repositories
             }
             catch (Exception)
             {
-                return 0;
                 throw;
             }
         }
@@ -95,43 +95,123 @@ namespace LinkedFit.PERSISTANCE.Repositories
                     int postId = parameters.Get<int>("ID");
                     return postId;
                 }
-                
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                
-                return 0;
-                throw ex;
+                throw;
             }
-
         }
+
+        //public async Task<int> CreatePostNormalAsync(CreateNormalPostDTO post)
+        //{
+        //    using (var unitOfWork = new UnitOfWork(_db))
+        //    {
+        //        try
+        //        {
+        //            var parameters = new DynamicParameters();
+        //            parameters.Add("@AuthorID", post.AuthorID);
+        //            parameters.Add("@Body", post.Body);
+        //            parameters.Add("@StatusID", post.StatusID);
+        //            parameters.Add("ID", dbType: DbType.Int32, direction: ParameterDirection.Output);
+        //            await unitOfWork.Connection.QueryAsync(CREATE_POST_NORMAL, parameters, unitOfWork.Transaction, commandType: CommandType.StoredProcedure);
+        //            int postId = parameters.Get<int>("ID");
+        //            // If there are no pictures or videos, commit and return post ID
+        //            postId = await InsertMediaFilesAsync(post, postId, unitOfWork);
+        //            if(postId == 0)
+        //            {
+        //                unitOfWork.Rollback();
+        //                return 0;
+        //            }
+        //            unitOfWork.Commit(); // Commit the transaction
+        //            return postId; // Return the post ID
+        //        }
+        //        catch (Exception)
+        //        {
+        //            unitOfWork.Rollback(); // Rollback transaction in case of exception
+        //            throw;
+        //        }
+        //    }
+        //}
 
         public async Task<int> CreatePostNormalAsync(CreateNormalPostDTO post)
         {
-            using (var unitOfWork = new UnitOfWork(_db))
+            using (var conn = await _db.CreateDbConnectionAsync())
             {
                 try
                 {
-                    var postId = await TryInsertNormalPostAsync(post);
-                    // If there are no pictures or videos, commit and return post ID
-                    postId = await InsertMediaFilesAsync(post, postId, unitOfWork);
-                    if(postId == 0)
+                    using( var transaction = conn.BeginTransaction())
                     {
-                        unitOfWork.Rollback();
-                        return 0;
+                        try
+                        {
+                            var parameters = new DynamicParameters();
+                            parameters.Add("@AuthorID", post.AuthorID);
+                            parameters.Add("@Body", post.Body);
+                            parameters.Add("@StatusID", post.StatusID);
+                            parameters.Add("ID", dbType: DbType.Int32, direction: ParameterDirection.Output);
+                            await conn.QueryAsync(CREATE_POST_NORMAL, parameters, commandType: CommandType.StoredProcedure, transaction: transaction);
+                            int postId = parameters.Get<int>("ID");
+
+                            if (post.Pictures == null && post.Videos == null)
+                            {
+                                return postId;
+                            }
+
+                            var mediaParameters = new DynamicParameters();
+
+                            // Process pictures if available
+                            if (post.Pictures != null)
+                            {
+                                DataTable dataTablePictures = new DataTable();
+                                dataTablePictures.Columns.Add("PostID", typeof(int));
+                                dataTablePictures.Columns.Add("PictureURI", typeof(string));
+                                dataTablePictures.Columns.Add("CreatedAt", typeof(DateTime));
+                                foreach (var picture in post.Pictures)
+                                {
+                                    dataTablePictures.Rows.Add(postId, picture.PictureURI, picture.CreatedAt);
+                                }
+                                mediaParameters.Add("@Pictures", dataTablePictures.AsTableValuedParameter("PicturesTableType"));
+                            }
+
+                            // Process videos if available
+                            if (post.Videos != null)
+                            {
+                                DataTable dataTableVideos = new DataTable();
+                                dataTableVideos.Columns.Add("PostID", typeof(int));
+                                dataTableVideos.Columns.Add("VideoURI", typeof(string));
+                                dataTableVideos.Columns.Add("CreatedAt", typeof(DateTime));
+                                foreach (var video in post.Videos)
+                                {
+                                    dataTableVideos.Rows.Add(postId, video.VideoURI, video.CreatedAt);
+                                }
+                                mediaParameters.Add("@Videos", dataTableVideos.AsTableValuedParameter("VideosTableType"));
+                            }
+                            if (post.Videos == null && post.Pictures == null)
+                            {
+                                transaction.Commit();
+                                return postId;
+                            }
+                            // Execute the media insertion stored procedure within the same transaction
+                            await conn.QueryAsync(INSERT_POST_MEDIA, mediaParameters, commandType: CommandType.StoredProcedure, transaction: transaction);
+                            transaction.Commit();
+                            return postId; // Return the post ID
+                        }
+                        
+
+                        catch (Exception)
+                        {
+                            transaction.Rollback();
+                            throw;
+                        }
                     }
-                    unitOfWork.Commit(); // Commit the transaction
-                    return postId; // Return the post ID
+
+
                 }
                 catch (Exception)
                 {
-                    unitOfWork.Rollback(); // Rollback transaction in case of exception
-                    return 0;
                     throw;
                 }
+                
             }
-
-
         }
 
         public async Task<int> CreatePostRecipeAsync(CreateRecipePostDTO post)

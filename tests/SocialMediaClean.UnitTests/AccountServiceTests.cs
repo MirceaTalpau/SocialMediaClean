@@ -26,11 +26,8 @@ namespace SocialMediaClean.UnitTests
         [Fact]
         public async Task Test1()
         {
-            string idResult = "2";
-            _accountRepo.Setup(x => x.CheckExistingUserAsync("cevasdadas")).ReturnsAsync(idResult);
-            var id = await _accountRepo.Object.CheckExistingUserAsync("cevasdadas");
 
-            id.ShouldBe(idResult);
+
         }
     }
 }

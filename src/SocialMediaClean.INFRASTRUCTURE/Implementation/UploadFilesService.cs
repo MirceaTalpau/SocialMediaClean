@@ -9,7 +9,7 @@ namespace LinkedFit.INFRASTRUCTURE.Implementation
     public class UploadFilesService : IUploadFilesService
     {
 
-        public async Task DeleteUploadedFiles(CreateNormalPostDTO post)
+        public void DeleteUploadedFiles(CreateNormalPostDTO post)
         {
             if (post.Pictures != null)
             {
@@ -33,7 +33,7 @@ namespace LinkedFit.INFRASTRUCTURE.Implementation
             }
         }
 
-        public async Task DeletePicture(string pictureUri)
+        public void DeletePicture(string pictureUri)
         {
             if (File.Exists(pictureUri))
             {
