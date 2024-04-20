@@ -50,14 +50,14 @@ namespace LinkedFit.INFRASTRUCTURE.Implementation
             var counter = 1;
             var timestamp = DateTime.Now.ToString("yyyyMMddHHmmss");
             var newFileName = $"{baseFileName}_{timestamp}_{counter}{fileExtension}";
-            var filePath = Path.Combine(@"C:\Storage\Pictures", newFileName);
+            var filePath = Path.Combine(@"C:\_Work\Frontend\LinkedFit\src\assets\images", newFileName);
 
             // Check if file with the same name already exists
             while (File.Exists(filePath))
             {
                 counter++;
                 newFileName = $"{baseFileName}_{timestamp}_{counter}{fileExtension}";
-                filePath = Path.Combine(@"C:\Storage\Pictures", newFileName);
+                filePath = Path.Combine(@"C:\_Work\Frontend\LinkedFit\src\assets\images", newFileName);
             }
 
             using (var fileStream = new FileStream(filePath, FileMode.Create))
@@ -82,14 +82,14 @@ namespace LinkedFit.INFRASTRUCTURE.Implementation
                     var counter = 1;
                     var timestamp = DateTime.Now.ToString("yyyyMMddHHmmss");
                     var newFileName = $"{baseFileName}_{timestamp}_{counter}{fileExtension}";
-                    var filePath = Path.Combine(@"C:\Storage\Pictures", newFileName);
+                    var filePath = Path.Combine(@"C:\_Work\Frontend\LinkedFit\src\assets\images", newFileName);
 
                     // Check if file with the same name already exists
                     while (File.Exists(filePath))
                     {
                         counter++;
                         newFileName = $"{baseFileName}_{timestamp}_{counter}{fileExtension}";
-                        filePath = Path.Combine(@"C:\Storage\Pictures", newFileName);
+                        filePath = Path.Combine(@"C:\_Work\Frontend\LinkedFit\src\assets\images", newFileName);
                     }
 
                     using (var fileStream = new FileStream(filePath, FileMode.Create))

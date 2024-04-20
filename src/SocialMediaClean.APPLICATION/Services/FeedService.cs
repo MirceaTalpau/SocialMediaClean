@@ -22,7 +22,7 @@ namespace LinkedFit.APPLICATION.Services
                 posts.OrderByDescending(post => post.CreatedAt).ToList();
                 foreach (NormalPostView post in posts)
                 {
-                    post.Media = await _postRepository.GetMediaPost(post.ID);
+                    post.Media = await _postRepository.GetMediaPost(post.PostID);
                     post.Media.ToList().Sort(new MediaPostComparer());
                 }
                 return posts;
