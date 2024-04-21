@@ -2,7 +2,7 @@
 {
     public class NormalPostView
     {
-        public int PostID { get; set; } 
+        public int ID { get; set; } 
         public int AuthorID { get; set; }
         public int StatusID { get; set; }
         public int GroupID { get; set; }

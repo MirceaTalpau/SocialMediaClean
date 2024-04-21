@@ -18,11 +18,11 @@ namespace LinkedFit.APPLICATION.Services
         {
             try
             {
-                var posts = await _postRepository.GetAllNormalPosts();
+                var posts = await _postRepository.GetAllNormalPostsAsync();
                 posts.OrderByDescending(post => post.CreatedAt).ToList();
                 foreach (NormalPostView post in posts)
                 {
-                    post.Media = await _postRepository.GetMediaPost(post.PostID);
+                    post.Media = await _postRepository.GetMediaPostAsync(post.ID);
                     post.Media.ToList().Sort(new MediaPostComparer());
                 }
                 return posts;
@@ -36,7 +36,13 @@ namespace LinkedFit.APPLICATION.Services
         {
             try
             {
-                IEnumerable<RecipePostView> posts = await _postRepository.GetAllRecipePosts();
+                IEnumerable<RecipePostView> posts = await _postRepository.GetAllRecipePostsAsync();
+                foreach (RecipePostView post in posts)
+                {
+                    post.Media = await _postRepository.GetMediaPostAsync(post.PostID);
+                    post.Ingredients = await _postRepository.GetIngredientsAsync(post.RecipeID);
+                    post.Media.ToList().Sort(new MediaPostComparer());
+                }
                 return posts;
             }
             catch (Exception)

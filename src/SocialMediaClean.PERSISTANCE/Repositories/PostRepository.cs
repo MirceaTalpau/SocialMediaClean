@@ -23,6 +23,7 @@ namespace LinkedFit.PERSISTANCE.Repositories
         private readonly string GET_ALL_NORMAL_POSTS = "usp_Post_GetNormalPosts";
         private readonly string GET_ALL_PUBLIC_NORMAL_POSTS = "usp_Post_GetPublicNormalPosts";
         private readonly string GET_ALL_RECIPE_POSTS = "usp_Post_GetAllRecipePosts";
+        private readonly string GET_RECIPE_INGREDIENTS = "usp_Post_GetIngredients";
         private readonly string GET_MEDIA_POST = "usp_Post_GetMediaPost";
 
 
@@ -324,7 +325,7 @@ namespace LinkedFit.PERSISTANCE.Repositories
                 }
             }
         }
-        public async Task<IEnumerable<NormalPostView>> GetAllNormalPosts()
+        public async Task<IEnumerable<NormalPostView>> GetAllNormalPostsAsync()
         {
             using (var _unitOfWork = await _db.CreateDbConnectionAsync())
             {
@@ -343,7 +344,7 @@ namespace LinkedFit.PERSISTANCE.Repositories
                 }
             }
         }
-        public async Task<IEnumerable<RecipePostView>> GetAllRecipePosts()
+        public async Task<IEnumerable<RecipePostView>> GetAllRecipePostsAsync()
         {
             using (var conn = await _db.CreateDbConnectionAsync())
             {
@@ -363,7 +364,29 @@ namespace LinkedFit.PERSISTANCE.Repositories
             }
         }
 
-        public async Task<IEnumerable<MediaPostView>> GetMediaPost(int postId)
+        public async Task<IEnumerable<Ingredient>> GetIngredientsAsync(int recipeId)
+        {
+            using (var conn = await _db.CreateDbConnectionAsync())
+            {
+                try
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@RecipeID", recipeId);
+                    IEnumerable<Ingredient> ingredients = await conn.QueryAsync<Ingredient>("usp_Post_GetIngredients", parameters, commandType: CommandType.StoredProcedure);
+                    if (ingredients == null)
+                    {
+                        throw new Exception();
+                    }
+                    return ingredients;
+                }
+                catch (Exception)
+                {
+                    throw;
+                }
+            }
+        }
+
+        public async Task<IEnumerable<MediaPostView>> GetMediaPostAsync(int postId)
         {
             using (var conn = await _db.CreateDbConnectionAsync())
             {

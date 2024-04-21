@@ -22,8 +22,7 @@ namespace LinkedFit.API.Controllers
         [HttpGet("normal")]
         public async Task<IActionResult> GetAllPublicNormalPosts()
         {
-            try
-            {
+            try{
             var posts = await _feedService.GetAllPublicNormalPosts();
             return Ok(posts);
             }
@@ -40,8 +39,7 @@ namespace LinkedFit.API.Controllers
             try
             {
                 var posts = await _feedService.GetAllRecipePosts();
-                var post = posts.FirstOrDefault();
-                return Ok(post);
+                return Ok(posts);
             }
             catch (Exception ex)
             {

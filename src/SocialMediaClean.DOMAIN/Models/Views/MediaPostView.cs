@@ -7,5 +7,6 @@
         public string PictureURI { get; set; } = default!;
         public DateTime VideoCreatedAt { get; set; } = default!;
         public string VideoURI { get; set; } = default!;
+        public string Caption { get; set; } = default!;
     }
 }

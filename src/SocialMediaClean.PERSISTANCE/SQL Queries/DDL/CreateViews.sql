@@ -2,10 +2,9 @@ CREATE OR ALTER VIEW RecipePost
 AS
 SELECT p.ID AS PostID,p.AuthorID,r.ID AS RecipeID,p.StatusID,p.GroupID,
 p.SharedByID,us.FirstName + ' ' + us.LastName as SharedBy,p.Body,p.CreatedAt,
-u.FirstName + ' ' + u.LastName AS AuthorName,
+u.FirstName + ' ' + u.LastName AS AuthorName,u.ProfilePictureURL AS AuthorProfilePictureURL,
 r.Name AS RecipeName,r.Description,r.Instructions,r.CookingTime,
 r.Servings,r.Calories,r.Protein,r.Carbs,r.Fat
-
 FROM Posts p
 INNER JOIN Recipe r
 ON p.ID = r.PostID

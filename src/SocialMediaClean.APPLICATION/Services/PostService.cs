@@ -52,7 +52,8 @@ namespace LinkedFit.APPLICATION.Services
             try
             {
                 await UploadFiles(post);
-                return await _postRepository.CreatePostRecipeAsync(post);
+                var postId = await _postRepository.CreatePostRecipeAsync(post);
+                return postId;
             }
             catch (Exception)
             {
