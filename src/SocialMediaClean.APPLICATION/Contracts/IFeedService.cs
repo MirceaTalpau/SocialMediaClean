@@ -7,5 +7,7 @@ namespace LinkedFit.APPLICATION.Contracts
     {
         Task<IEnumerable<RecipePostView>> GetAllRecipePosts();
         Task<IEnumerable<NormalPostView>> GetAllPublicNormalPosts();
+        Task<IEnumerable<ProgressPostView>> GetAllPublicProgressPosts();
+
     }
 }

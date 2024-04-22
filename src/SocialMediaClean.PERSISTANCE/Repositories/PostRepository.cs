@@ -25,6 +25,7 @@ namespace LinkedFit.PERSISTANCE.Repositories
         private readonly string GET_ALL_RECIPE_POSTS = "usp_Post_GetAllRecipePosts";
         private readonly string GET_RECIPE_INGREDIENTS = "usp_Post_GetIngredients";
         private readonly string GET_MEDIA_POST = "usp_Post_GetMediaPost";
+        private readonly string GET_PUBLIC_PROGRESS_POSTS = "usp_Post_GetPublicProgressPosts";
 
 
         public PostRepository(IDbConnectionFactory db)
@@ -273,8 +274,9 @@ namespace LinkedFit.PERSISTANCE.Repositories
 
         public async Task<int> CreatePostProgressAsync(CreateProgressPostDTO post)
         {
-            using (var _unitOfWork = new UnitOfWork(_db))
+            using (var conn = await _db.CreateDbConnectionAsync())
             {
+                using(var transaction = conn.BeginTransaction())
                 try
                 {
                     //var userExists = await VerifyUserExistsAsync(post.AuthorID);
@@ -282,20 +284,19 @@ namespace LinkedFit.PERSISTANCE.Repositories
                     //{
                     //    throw new Exception("User does not exist.");
                     //}
-                    var postId = await TryInsertNormalPostAsync(post);
+                    var postParameters = new DynamicParameters();
+                    postParameters.Add("@AuthorID", post.AuthorID);
+                    postParameters.Add("@Body", post.Body);
+                    postParameters.Add("@StatusID", post.StatusID);
+                    postParameters.Add("ID", dbType: DbType.Int32, direction: ParameterDirection.Output);
+                    await conn.QueryAsync(CREATE_POST_NORMAL, postParameters,transaction, commandType: CommandType.StoredProcedure);
+                    int postId = postParameters.Get<int>("ID");
                     if (postId == 0)
                     {
-                        _unitOfWork.Rollback();
+                        transaction.Rollback();
                         return 0;
                     }
-                    // If there are no pictures or videos, commit and return post ID
-                    //MODIFICA AICI
-                    postId = await InsertMediaFilesAsync(post, postId, _unitOfWork);
-                    if (postId == 0)
-                    {
-                        _unitOfWork.Rollback();
-                        return 0;
-                    }
+                   
                     var parameters = new DynamicParameters();
                     parameters.Add("@PostID", postId);
                     parameters.Add("@BeforeWeight", Int32.Parse(post.BeforeWeight));
@@ -305,22 +306,22 @@ namespace LinkedFit.PERSISTANCE.Repositories
                     parameters.Add("@BeforeDate", DateTime.Parse(post.BeforeDate));
                     parameters.Add("@AfterDate", DateTime.Parse(post.AfterDate));
                     parameters.Add("ID", dbType: DbType.Int32, direction: ParameterDirection.Output);
-                    await _unitOfWork.Connection.QueryAsync<int>(CREATE_POST_PROGRESS, parameters, _unitOfWork.Transaction, commandType: CommandType.StoredProcedure);
+                    await conn.QueryAsync<int>(CREATE_POST_PROGRESS, parameters, transaction, commandType: CommandType.StoredProcedure);
                     var progressId = parameters.Get<int>("ID");
                     if (progressId == 0)
                     {
-                        _unitOfWork.Rollback();
+                        transaction.Rollback();
                         return 0;
                     }
                     else
                     {
-                        _unitOfWork.Commit();
+                        transaction.Commit();
                     }
                     return postId;
                 }
                 catch (Exception)
                 {
-                    _unitOfWork.Rollback();
+                    transaction.Rollback();
                     throw;
                 }
             }
@@ -372,12 +373,31 @@ namespace LinkedFit.PERSISTANCE.Repositories
                 {
                     var parameters = new DynamicParameters();
                     parameters.Add("@RecipeID", recipeId);
-                    IEnumerable<Ingredient> ingredients = await conn.QueryAsync<Ingredient>("usp_Post_GetIngredients", parameters, commandType: CommandType.StoredProcedure);
+                    IEnumerable<Ingredient> ingredients = await conn.QueryAsync<Ingredient>(GET_RECIPE_INGREDIENTS, parameters, commandType: CommandType.StoredProcedure);
                     if (ingredients == null)
                     {
                         throw new Exception();
                     }
                     return ingredients;
+                }
+                catch (Exception)
+                {
+                    throw;
+                }
+            }
+        }
+        public async Task<IEnumerable<ProgressPostView>> GetPublicProgressPostsAsync()
+        {
+            using (var conn = await _db.CreateDbConnectionAsync())
+            {
+                try
+                {
+                    IEnumerable<ProgressPostView> posts = await conn.QueryAsync<ProgressPostView>(GET_PUBLIC_PROGRESS_POSTS, commandType: CommandType.StoredProcedure);
+                    if (posts == null)
+                    {
+                        throw new Exception();
+                    }
+                    return posts;
                 }
                 catch (Exception)
                 {

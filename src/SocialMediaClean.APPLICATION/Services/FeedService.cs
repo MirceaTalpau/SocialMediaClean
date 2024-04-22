@@ -50,5 +50,39 @@ namespace LinkedFit.APPLICATION.Services
                 throw;
             }
         }
+
+        public async Task<IEnumerable<ProgressPostView>> GetAllPublicProgressPosts()
+        {
+            try
+            {
+                IEnumerable<ProgressPostView> posts = await _postRepository.GetPublicProgressPostsAsync();
+                foreach (ProgressPostView post in posts)
+                {
+                    List<MediaPostView> medias = new List<MediaPostView>();
+                    var before = new MediaPostView
+                    {
+                        PostID = post.PostID,
+                        PictureCreatedAt = post.BeforeDate,
+                        PictureURI = post.BeforePictureURI,
+                        Caption = post.BeforeWeight.ToString()
+                    };
+                    var after = new MediaPostView
+                    {
+                        PostID = post.PostID,
+                        PictureCreatedAt = post.AfterDate,
+                        PictureURI = post.AfterPictureURI,
+                        Caption = post.AfterWeight.ToString()
+                    };
+                    medias.Add(before);
+                    medias.Add(after);
+                    post.Media = medias;
+                }
+                return posts;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
     }
 }

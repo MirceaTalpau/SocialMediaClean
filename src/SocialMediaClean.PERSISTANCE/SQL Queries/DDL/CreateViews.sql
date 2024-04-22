@@ -40,10 +40,13 @@ WHERE s.Status = 'Public'
 CREATE VIEW ProgressPost
 AS
 SELECT p.ID AS PostID,p.AuthorID,pr.ID AS ProgressID,p.StatusID,p.GroupID,p.SharedByID,p.Body,p.CreatedAt,
-pr.BeforeWeight,pr.AfterWeight,pr.BeforePictureURI,pr.AfterPictureURI,pr.BeforeDate,pr.AfterDate
+pr.BeforeWeight,pr.AfterWeight,pr.BeforePictureURI,pr.AfterPictureURI,pr.BeforeDate,pr.AfterDate,u.ProfilePictureURL,
+u.FirstName + ' ' + u.LastName as AuthorName
 FROM Posts p
 INNER JOIN Progress pr
 ON p.ID = pr.PostID
+INNER JOIN Users u
+ON u.ID = p.AuthorID
 
 
 CREATE OR ALTER VIEW MediaPost

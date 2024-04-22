@@ -47,5 +47,19 @@ namespace LinkedFit.API.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, "Error retrieving data from the database");
             }
         }
+        [HttpGet("progress")]
+        public async Task<IActionResult> GetAllPublicProgressPosts()
+        {
+            try
+            {
+                var posts = await _feedService.GetAllPublicProgressPosts();
+                return Ok(posts);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, "Error retrieving data from the database");
+            }
+        }
     }
 }

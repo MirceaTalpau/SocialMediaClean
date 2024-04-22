@@ -13,6 +13,7 @@ namespace LinkedFit.PERSISTANCE.Interfaces
         public Task<IEnumerable<RecipePostView>> GetAllRecipePostsAsync();
         public Task<IEnumerable<MediaPostView>> GetMediaPostAsync(int postId);
         public Task<IEnumerable<Ingredient>> GetIngredientsAsync(int recipeId);
+        public Task<IEnumerable<ProgressPostView>> GetPublicProgressPostsAsync();
 
 
 
