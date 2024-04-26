@@ -1,4 +1,5 @@
-﻿using LinkedFit.DOMAIN.Models.DTOs.Auth;
+﻿using LinkedFit.DOMAIN.Models.DTOs.Account;
+using LinkedFit.DOMAIN.Models.DTOs.Auth;
 using Microsoft.IdentityModel.Tokens;
 using SocialMediaClean.APPLICATION.Contracts;
 using SocialMediaClean.APPLICATION.Response;
@@ -385,6 +386,11 @@ namespace SocialMediaClean.APPLICATION.Services
                 salt[i] = Convert.ToByte(passwordSalt.Substring(i * 2, 2), 16);
             }
             return salt;
+        }
+        public async Task<UserDataDTO> GetUserDataDTOAsync(int id)
+        {
+            return await _accountRepository.GetUserDataAsync(id);
+
         }
     }
 }

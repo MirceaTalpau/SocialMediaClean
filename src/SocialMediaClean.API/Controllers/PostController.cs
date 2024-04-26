@@ -75,7 +75,21 @@ namespace LinkedFit.API.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
                 throw;
             }
-
         }
+        [HttpDelete("{postId}")]
+        public async Task<IActionResult> DeleteNormalPostAsync(int postId)
+        {
+            try
+            {
+                var medias = await _postService.DeletePostAsync(postId);
+                return Ok(medias);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+  
     }
 }

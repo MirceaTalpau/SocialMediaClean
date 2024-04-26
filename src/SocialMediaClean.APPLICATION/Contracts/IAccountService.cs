@@ -1,4 +1,5 @@
-﻿using LinkedFit.DOMAIN.Models.DTOs.Auth;
+﻿using LinkedFit.DOMAIN.Models.DTOs.Account;
+using LinkedFit.DOMAIN.Models.DTOs.Auth;
 using SocialMediaClean.APPLICATION.Response;
 
 namespace SocialMediaClean.APPLICATION.Contracts
@@ -11,6 +12,7 @@ namespace SocialMediaClean.APPLICATION.Contracts
         Task<BaseResponse> ResendEmailConfirmationTokenAsync(string email);
         Task<BaseResponse> VerifyEmailAsync(string email, string token);
         Task<ResetTokenUserIdDTO> VerifyResetPasswordTokenAsync(string token);
+        Task<UserDataDTO> GetUserDataDTOAsync(int id);
 
 
 

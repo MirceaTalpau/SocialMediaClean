@@ -1,5 +1,6 @@
 ﻿using LinkedFit.DOMAIN.Models.DTOs.Posts;
 using LinkedFit.DOMAIN.Models.Entities.Posts;
+using LinkedFit.DOMAIN.Models.Views;
 using LinkedFit.INFRASTRUCTURE.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Xabe.FFmpeg;
@@ -28,6 +29,26 @@ namespace LinkedFit.INFRASTRUCTURE.Implementation
                     if (File.Exists(video.VideoURI))
                     {
                         File.Delete(video.VideoURI);
+                    }
+                }
+            }
+        }
+        public void DeleteUploadedFiles(IEnumerable<MediaPostView> medias)
+        {
+            foreach(MediaPostView media in medias)
+            {
+                if(media.PictureURI != null)
+                {
+                    if (File.Exists(media.PictureURI))
+                    {
+                        File.Delete(media.PictureURI);
+                    }
+                }
+                if(media.VideoURI != null)
+                {
+                    if (File.Exists(media.VideoURI))
+                    {
+                        File.Delete(media.VideoURI);
                     }
                 }
             }

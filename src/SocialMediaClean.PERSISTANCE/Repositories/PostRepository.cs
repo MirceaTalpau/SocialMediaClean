@@ -6,6 +6,7 @@ using LinkedFit.PERSISTANCE.Interfaces;
 using Microsoft.VisualBasic;
 using SocialMediaClean.INFRASTRUCTURE.Interfaces;
 using System;
+using System.Collections.Generic;
 using System.Data;
 
 namespace LinkedFit.PERSISTANCE.Repositories
@@ -27,14 +28,17 @@ namespace LinkedFit.PERSISTANCE.Repositories
         private readonly string GET_MEDIA_POST = "usp_Post_GetMediaPost";
         private readonly string GET_PUBLIC_PROGRESS_POSTS = "usp_Post_GetPublicProgressPosts";
 
+        private readonly string DELETE_POST = "usp_Post_DeletePost";
+
+
 
         public PostRepository(IDbConnectionFactory db)
         {
             _db = db;
-            _unitOfWork = new UnitOfWork(_db);
+            _unitOfWork = new UnitOfWork();
         }
         
-        private async Task<int> InsertMediaFilesAsync(CreateNormalPostDTO post,int postId, UnitOfWork unitOfWork)
+        private async Task<int> InsertMediaFilesAsync(CreateNormalPostDTO post,int postId, IDbConnection conn,IDbTransaction transaction)
         {
             try { 
                 if (post.Pictures == null && post.Videos == null)
@@ -73,7 +77,7 @@ namespace LinkedFit.PERSISTANCE.Repositories
             }
 
             // Execute the media insertion stored procedure within the same transaction
-            await unitOfWork.Connection.QueryAsync(INSERT_POST_MEDIA, mediaParameters, unitOfWork.Transaction, commandType: CommandType.StoredProcedure);
+            await conn.QueryAsync(INSERT_POST_MEDIA, mediaParameters, transaction, commandType: CommandType.StoredProcedure);
             return postId;
             }
             catch (Exception)
@@ -82,21 +86,18 @@ namespace LinkedFit.PERSISTANCE.Repositories
             }
         }
 
-        public async Task<int> TryInsertNormalPostAsync(CreateNormalPostDTO post)
+        public async Task<int> TryInsertNormalPostAsync(CreateNormalPostDTO post,IDbConnection conn,IDbTransaction transaction)
         {
             try
             {
-                using (var conn = await _db.CreateDbConnectionAsync() )
-                {
-                    var parameters = new DynamicParameters();
-                    parameters.Add("@AuthorID", post.AuthorID);
-                    parameters.Add("@Body", post.Body);
-                    parameters.Add("@StatusID", post.StatusID);
-                    parameters.Add("ID", dbType: DbType.Int32, direction: ParameterDirection.Output);
-                    await conn.QueryAsync(CREATE_POST_NORMAL, parameters, commandType: CommandType.StoredProcedure);
-                    int postId = parameters.Get<int>("ID");
-                    return postId;
-                }
+                var normalPostParameters = new DynamicParameters();
+                normalPostParameters.Add("@AuthorID", post.AuthorID);
+                normalPostParameters.Add("@Body", post.Body);
+                normalPostParameters.Add("@StatusID", post.StatusID);
+                normalPostParameters.Add("ID", dbType: DbType.Int32, direction: ParameterDirection.Output);
+                await conn.QueryAsync(CREATE_POST_NORMAL, normalPostParameters, transaction, commandType: CommandType.StoredProcedure);
+                int postId = normalPostParameters.Get<int>("ID");
+                return postId;
             }
             catch (Exception)
             {
@@ -218,13 +219,14 @@ namespace LinkedFit.PERSISTANCE.Repositories
 
         public async Task<int> CreatePostRecipeAsync(CreateRecipePostDTO post)
         {
-            using (var _unitOfWork = new UnitOfWork(_db))
+            using (var conn = await _db.CreateDbConnectionAsync())
             {
+                using(var transaction = conn.BeginTransaction())
                 try
                 {
-                    var postId = await TryInsertNormalPostAsync(post);
+                    var postId = await TryInsertNormalPostAsync(post,conn,transaction);
                     // If there are no pictures or videos, commit and return post ID
-                    postId = await InsertMediaFilesAsync(post, postId, _unitOfWork);
+                    postId = await InsertMediaFilesAsync(post, postId, conn,transaction);
                     var parameters = new DynamicParameters();
                     parameters.Add("@PostID", postId);
                     parameters.Add("@Name", post.Name);
@@ -237,12 +239,11 @@ namespace LinkedFit.PERSISTANCE.Repositories
                     parameters.Add("@Carbs", Int32.Parse(post.Carbs));
                     parameters.Add("@Fat", Int32.Parse(post.Fat));
                     parameters.Add("ID", dbType: DbType.Int32, direction: ParameterDirection.Output);
-                    await _unitOfWork.Connection.QueryAsync<int>(CREATE_POST_RECIPE, parameters, _unitOfWork.Transaction, commandType: CommandType.StoredProcedure);
+                    await conn.QueryAsync<int>(CREATE_POST_RECIPE, parameters, transaction, commandType: CommandType.StoredProcedure);
                     var recipeId = parameters.Get<int>("ID");
                     if(recipeId == 0)
                     {
-                        _unitOfWork.Rollback();
-                        return 0;
+                        transaction.Rollback();
                     }
                     else
                     {
@@ -258,16 +259,15 @@ namespace LinkedFit.PERSISTANCE.Repositories
                         }
                         var ingredientParameters = new DynamicParameters();
                         ingredientParameters.Add("@Ingredients", dataTableIngredients.AsTableValuedParameter("IngredientsTableType"));
-                        await _unitOfWork.Connection.QueryAsync(INSERT_RECIPE_INGREDIENTS, ingredientParameters, _unitOfWork.Transaction, commandType: CommandType.StoredProcedure);
-                        _unitOfWork.Commit();
+                        await conn.QueryAsync(INSERT_RECIPE_INGREDIENTS, ingredientParameters, transaction, commandType: CommandType.StoredProcedure);
+                        transaction.Commit();
                     }
                     return postId;
                 }
                 catch (Exception)
                 {
-                    _unitOfWork.Rollback();
-                    return 0;
-                    throw;
+                        transaction.Rollback();
+                        throw;
                 }
             }
         }
@@ -427,6 +427,29 @@ namespace LinkedFit.PERSISTANCE.Repositories
                 }
             }
 
+        }
+
+        public async Task<IEnumerable<MediaPostView>> DeletePostAsync(int postId)
+        {
+            using (var conn = await _db.CreateDbConnectionAsync())
+            {
+                try
+                {
+                    IEnumerable<MediaPostView> media = await GetMediaPostAsync(postId);
+                    if(media == null)
+                    {
+                         media = new List<MediaPostView>();
+                    }
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@PostID", postId);
+                    await conn.QueryAsync(DELETE_POST, parameters, commandType: CommandType.StoredProcedure);
+                    return media;
+                }
+                catch (Exception)
+                {
+                    throw;
+                }
+            }
         }
     }
 

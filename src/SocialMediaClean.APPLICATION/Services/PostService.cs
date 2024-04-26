@@ -87,5 +87,20 @@ namespace LinkedFit.APPLICATION.Services
             }
 
         }
+
+        public async Task<bool> DeletePostAsync(int postId)
+        {
+            try
+            {
+                var medias = await _postRepository.DeletePostAsync(postId);
+                uploadFiles.DeleteUploadedFiles(medias);
+                return true;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
+        }
     }
 }

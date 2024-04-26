@@ -1,5 +1,6 @@
 ﻿using LinkedFit.DOMAIN.Models.DTOs.Posts;
 using LinkedFit.DOMAIN.Models.Entities.Posts;
+using LinkedFit.DOMAIN.Models.Views;
 
 namespace LinkedFit.INFRASTRUCTURE.Interfaces
 {
@@ -11,6 +12,7 @@ namespace LinkedFit.INFRASTRUCTURE.Interfaces
         public void DeleteUploadedFiles(CreateNormalPostDTO post);
         public Task<string> UploadPictureAsync(IFormFile file);
         public void DeletePicture(string pictureUri);
+        public void DeleteUploadedFiles(IEnumerable<MediaPostView> medias);
 
 
 

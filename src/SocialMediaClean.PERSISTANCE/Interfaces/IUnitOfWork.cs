@@ -1,19 +1,12 @@
 ﻿using System.Data;
 
-namespace LinkedFit.PERSISTANCE.Interfaces
+namespace LinkedFit.PERSISTANCE.Repositories
 {
-    public interface IUnitOfWork : IDisposable
+    public interface IUnitOfWork
     {
-        IDbConnection Connection { get; }
-        Guid Id { get; }
-        IDbTransaction Transaction { get; }
-
-        void BeginTransaction();
         void Commit();
-        void CreateConnectionAsync();
-        IDbConnection CreateConnection();
-
         void Dispose();
         void Rollback();
+
     }
 }

@@ -1,4 +1,5 @@
-﻿using LinkedFit.DOMAIN.Models.DTOs.Auth;
+﻿using LinkedFit.DOMAIN.Models.DTOs.Account;
+using LinkedFit.DOMAIN.Models.DTOs.Auth;
 
 namespace SocialMediaClean.PERSISTANCE.Interfaces
 {
@@ -12,7 +13,8 @@ namespace SocialMediaClean.PERSISTANCE.Interfaces
         Task<string> GetForgotPasswordToken(string email);
         Task ValidateEmailAsync(string email);
         Task<bool> IsEmailVerifiedAsync(string email);
-       Task<string> GetPasswordResetTokenAsync(int id);
+        Task<string> GetPasswordResetTokenAsync(int id);
+        Task<UserDataDTO> GetUserDataAsync(int id);
 
     }
 }

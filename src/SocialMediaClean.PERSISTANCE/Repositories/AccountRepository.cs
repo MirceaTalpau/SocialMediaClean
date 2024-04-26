@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using LinkedFit.DOMAIN.Models.DTOs.Account;
 using LinkedFit.DOMAIN.Models.DTOs.Auth;
 using SocialMediaClean.INFRASTRUCTURE.Interfaces;
 using SocialMediaClean.PERSISTANCE.Interfaces;
@@ -17,6 +18,7 @@ namespace SocialMediaClean.PERSISTANCE.Repositories
         private readonly string VALIDATE_EMAIL = "usp_ValidateEmail";
         private readonly string CHECK_EMAIL_VERIFIED = "usp_CheckEmailVerified";
         private readonly string GET_PASSWORD_RESET_TOKEN = "usp_account_GetPasswordResetToken";
+        private readonly string ACCOUNT_GET_USER_DATA = "usp_account_GetUserData";
         private readonly IDbConnectionFactory _db;
 
         public AccountRepository(IDbConnectionFactory db)
@@ -133,6 +135,16 @@ namespace SocialMediaClean.PERSISTANCE.Repositories
                 await conn.QueryAsync(CHECK_EMAIL_VERIFIED, parameters, commandType: CommandType.StoredProcedure);
                 var result = parameters.Get<bool>("Verified");
                 return result;
+            }
+        }
+        public async Task<UserDataDTO> GetUserDataAsync(int id)
+        {
+            using (var conn = await _db.CreateDbConnectionAsync())
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("ID", id);
+                var userData = await conn.QuerySingleAsync<UserDataDTO>(ACCOUNT_GET_USER_DATA, parameters, commandType: CommandType.StoredProcedure);
+                return userData;
             }
         }
 

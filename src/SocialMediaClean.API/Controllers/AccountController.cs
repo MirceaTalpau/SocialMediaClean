@@ -129,6 +129,22 @@ namespace SocialMediaClean.API.Controllers
                 throw;
             }
         }
+        [HttpPost("user-data/{id}")]
+        public async Task<ActionResult> GetUserDataAsync(int id)
+        {
+            _logger.LogInformation($"Get user data request for id {id}");
+            try
+            {
+                var result = await _accountService.GetUserDataDTOAsync(id);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Exception raised at the {id} with the exception message {ex.Message}");
+                return BadRequest("Invalid, tampered, or expired code used.");
+                throw;
+            }
+        }
 
     }
 }
