@@ -8,7 +8,7 @@
         public int StatusID { get; set; } = default!;
         public int GroupID { get; set; } = default!;
         public int SharedByID { get; set; } = default!;
-        public string Body { get; set; } = string.Empty;
+        public string Body { get; set; } 
         public DateTime CreatedAt { get; set; } =default!;
         public double BeforeWeight { get; set; } = default!;
         public double AfterWeight { get; set; } = default!;

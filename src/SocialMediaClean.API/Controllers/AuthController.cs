@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 using SocialMediaClean.APPLICATION.Contracts;
 using SocialMediaClean.APPLICATION.Requests;
 using SocialMediaClean.APPLICATION.Response;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace SocialMediaClean.API.Controllers
 {

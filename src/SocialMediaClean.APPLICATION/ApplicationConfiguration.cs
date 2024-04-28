@@ -32,9 +32,13 @@ namespace SocialMediaClean.APPLICATION
 
             ////////////////POSTS/////////////////////
             services.AddScoped<IPostService, PostService>();
+            services.AddScoped<IPostActionsService, PostActionsService>();
 
             ////////////////FEED/////////////////////
             services.AddScoped<IFeedService, FeedService>();
+
+            ////////////////COMMENTS/////////////////////
+            services.AddScoped<ICommentsService, CommentsService>();
 
             return services;
 

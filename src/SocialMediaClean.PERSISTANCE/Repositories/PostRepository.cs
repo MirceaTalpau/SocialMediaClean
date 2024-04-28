@@ -35,7 +35,6 @@ namespace LinkedFit.PERSISTANCE.Repositories
         public PostRepository(IDbConnectionFactory db)
         {
             _db = db;
-            _unitOfWork = new UnitOfWork();
         }
         
         private async Task<int> InsertMediaFilesAsync(CreateNormalPostDTO post,int postId, IDbConnection conn,IDbTransaction transaction)
@@ -326,13 +325,15 @@ namespace LinkedFit.PERSISTANCE.Repositories
                 }
             }
         }
-        public async Task<IEnumerable<NormalPostView>> GetAllNormalPostsAsync()
+        public async Task<IEnumerable<NormalPostView>> GetAllNormalPostsAsync(int userId)
         {
             using (var _unitOfWork = await _db.CreateDbConnectionAsync())
             {
                 try
                 {
-                    IEnumerable<NormalPostView> posts = await _unitOfWork.QueryAsync<NormalPostView>(GET_ALL_PUBLIC_NORMAL_POSTS, commandType: CommandType.StoredProcedure);
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@CurrentUserID", userId);
+                    IEnumerable<NormalPostView> posts = await _unitOfWork.QueryAsync<NormalPostView>(GET_ALL_PUBLIC_NORMAL_POSTS,parameters, commandType: CommandType.StoredProcedure);
                     if (posts == null)
                     {
                         throw new Exception();

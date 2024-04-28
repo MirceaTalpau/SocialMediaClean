@@ -1,5 +1,6 @@
 ﻿using LinkedFit.APPLICATION.Contracts;
 using LinkedFit.APPLICATION.Services;
+using LinkedFit.DOMAIN.Models.DTOs.PostActions;
 using LinkedFit.DOMAIN.Models.DTOs.Posts;
 using LinkedFit.INFRASTRUCTURE.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -16,14 +17,16 @@ namespace LinkedFit.API.Controllers
     public class PostController : ControllerBase
     {
         private readonly IPostService _postService;
+        private readonly IPostActionsService _postActionsService;
         private readonly ILogger<AuthController> _logger;
         private readonly IUploadFilesService _uploadFilesService;
 
-        public PostController(IPostService postService, ILogger<AuthController> logger, IUploadFilesService uploadFilesService)
+        public PostController(IPostService postService, ILogger<AuthController> logger, IUploadFilesService uploadFilesService, IPostActionsService postActionsService)
         {
             _postService = postService;
             _logger = logger;
             _uploadFilesService = uploadFilesService;
+            _postActionsService = postActionsService;
         }
         [HttpPost("normal")]
         public async Task<IActionResult> CreatePostNormalAsync([FromForm] CreateNormalPostDTO formData)
@@ -83,6 +86,21 @@ namespace LinkedFit.API.Controllers
             {
                 var medias = await _postService.DeletePostAsync(postId);
                 return Ok(medias);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
+        [HttpPost("like")]
+        public async Task<IActionResult> AddLikeAsync([FromBody] PostLikeDTO like)
+        {
+            try
+            {
+                await _postActionsService.AddLikeAsync(like);
+                return Ok();
             }
             catch (Exception ex)
             {

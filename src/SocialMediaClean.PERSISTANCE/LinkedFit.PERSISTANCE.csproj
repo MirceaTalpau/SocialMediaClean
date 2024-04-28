@@ -17,6 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="SQL Queries\Procedures\Comments\" />
     <Folder Include="SQL Queries\Procedures\Users\" />
   </ItemGroup>
 

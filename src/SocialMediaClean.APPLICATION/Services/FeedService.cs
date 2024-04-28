@@ -14,15 +14,15 @@ namespace LinkedFit.APPLICATION.Services
         {
             _postRepository = postRepository;
         }
-        public async Task<IEnumerable<NormalPostView>> GetAllPublicNormalPosts()
+        public async Task<IEnumerable<NormalPostView>> GetAllPublicNormalPosts(int userId)
         {
             try
             {
-                var posts = await _postRepository.GetAllNormalPostsAsync();
+                var posts = await _postRepository.GetAllNormalPostsAsync(userId);
                 posts.OrderByDescending(post => post.CreatedAt).ToList();
                 foreach (NormalPostView post in posts)
                 {
-                    post.Media = await _postRepository.GetMediaPostAsync(post.ID);
+                    post.Media = await _postRepository.GetMediaPostAsync(post.PostID);
                     post.Media.ToList().Sort(new MediaPostComparer());
                 }
                 return posts;

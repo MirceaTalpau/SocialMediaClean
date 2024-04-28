@@ -16,25 +16,20 @@ INNER JOIN Statuses s
 ON p.StatusID = s.ID
 WHERE s.Status = 'Public'
 
-CREATE VIEW NormalPost
-AS
-SELECT Posts.*
-FROM Posts
-LEFT JOIN PROGRESS ON Posts.ID = PROGRESS.PostID
-LEFT JOIN Recipe ON Posts.ID = Recipe.PostID
-WHERE PROGRESS.PostID IS NULL
-AND Recipe.PostID IS NULL
-ORDER BY Posts.CreatedAt DESC;
+
 
 CREATE OR ALTER VIEW NormalPost
 AS
 SELECT p.ID AS PostID,p.AuthorID,p.StatusID,p.GroupID,p.SharedByID,p.Body,p.CreatedAt,
-u.FirstName + ' ' + u.LastName AS AuthorName, u.ProfilePictureURL
+u.FirstName + ' ' + u.LastName AS AuthorName, u.ProfilePictureURL, COUNT(l.PostID) AS LikesCount
 FROM Posts p
 INNER JOIN Users u
 ON p.AuthorID = u.ID
 INNER JOIN Statuses s
 ON p.StatusID = s.ID
+INNER JOIN Post_Likes l
+ON p.ID = l.PostID
+GROUP BY p.ID,p.AuthorID,p.StatusID,p.GroupID,p.SharedByID,p.Body,p.CreatedAt,u.FirstName,u.LastName,u.ProfilePictureURL
 WHERE s.Status = 'Public'
 
 CREATE VIEW ProgressPost

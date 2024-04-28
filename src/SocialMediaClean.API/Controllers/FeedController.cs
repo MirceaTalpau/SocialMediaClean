@@ -1,14 +1,18 @@
 ﻿using LinkedFit.APPLICATION.Contracts;
+using LinkedFit.APPLICATION.Helpers;
 using LinkedFit.DOMAIN.Models.Entities.Posts;
 using LinkedFit.DOMAIN.Models.Views;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using SocialMediaClean.API.Controllers;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace LinkedFit.API.Controllers
 { 
     [Route("api/v1/feed/")]
     [AllowAnonymous]
+    [Authorize]
     [ApiController]
     public class FeedController : ControllerBase
     {
@@ -22,9 +26,14 @@ namespace LinkedFit.API.Controllers
         [HttpGet("normal")]
         public async Task<IActionResult> GetAllPublicNormalPosts()
         {
-            try{
-            var posts = await _feedService.GetAllPublicNormalPosts();
-            return Ok(posts);
+            try
+            {
+                string token = Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+                var userId = JwtHelper.GetUserIdFromToken(token);
+                var posts = await _feedService.GetAllPublicNormalPosts(userId);
+                return Ok(posts);
+
+             
             }
             catch (Exception ex)
             {

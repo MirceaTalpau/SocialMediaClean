@@ -2,7 +2,7 @@
 {
     public class NormalPostView
     {
-        public int ID { get; set; } 
+        public int PostID { get; set; } 
         public int AuthorID { get; set; }
         public int StatusID { get; set; }
         public int GroupID { get; set; }
@@ -14,5 +14,7 @@
         public string SharedBy { get; set; }
         public string SharedByProfilePictureURL { get; set; }
         public IEnumerable<MediaPostView> Media { get; set; }
+        public int LikesCount { get; set; }
+        public bool CurrentUserLiked { get; set; }
     }
 }

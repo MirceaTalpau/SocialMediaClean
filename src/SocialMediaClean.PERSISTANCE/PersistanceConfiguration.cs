@@ -11,7 +11,7 @@ namespace SocialMediaClean.PERSISTANCE
     {
         public static IServiceCollection AddPersistanceConfiguration(this IServiceCollection services)
         {
-            services.AddScoped<IUnitOfWork, UnitOfWork>();
+            //services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             services.AddSingleton<IDbConnectionFactory, DbConnectionFactory>();
             services.AddScoped<IAuthRepository, AuthRepository>();
@@ -19,6 +19,9 @@ namespace SocialMediaClean.PERSISTANCE
 
             ////////POSTS
             services.AddScoped<IPostRepository, PostRepository>();
+            services.AddScoped<IPostActionsRepository, PostActionsRepository>();
+            ////////COMMENTS
+            services.AddScoped<ICommentRepository, CommentRepository>();
 
             return services;
         }
