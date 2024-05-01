@@ -1,6 +1,6 @@
-﻿namespace LinkedFit.DOMAIN.Models.DTOs.Comments
+﻿namespace LinkedFit.DOMAIN.Models.Views.Comments
 {
-    public class CommentDTO
+    public class CommentView
     {
         public int ID { get; set; }
         public int PostID { get; set; }

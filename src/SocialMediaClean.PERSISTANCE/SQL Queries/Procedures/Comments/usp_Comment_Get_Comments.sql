@@ -1,0 +1,7 @@
+﻿CREATE OR ALTER PROCEDURE usp_Comment_Get_Comments
+@PostID INT
+AS
+BEGIN
+	SELECT * FROM PostComments WHERE PostID = @PostID
+	ORDER BY CreatedAt DESC
+END

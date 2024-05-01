@@ -1,6 +1,6 @@
 ﻿using LinkedFit.DOMAIN.Models.DTOs.PostActions;
 
-namespace LinkedFit.APPLICATION.Services
+namespace LinkedFit.APPLICATION.Contracts
 {
     public interface IPostActionsService
     {

@@ -1,5 +1,4 @@
 ﻿using LinkedFit.APPLICATION.Contracts;
-using LinkedFit.APPLICATION.Services;
 using LinkedFit.DOMAIN.Models.DTOs.PostActions;
 using LinkedFit.DOMAIN.Models.DTOs.Posts;
 using LinkedFit.INFRASTRUCTURE.Interfaces;

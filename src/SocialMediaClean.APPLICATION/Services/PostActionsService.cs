@@ -1,8 +1,8 @@
-﻿using LinkedFit.APPLICATION.Services;
+﻿using LinkedFit.APPLICATION.Contracts;
 using LinkedFit.DOMAIN.Models.DTOs.PostActions;
 using LinkedFit.PERSISTANCE.Repositories;
 
-namespace LinkedFit.APPLICATION.Contracts
+namespace LinkedFit.APPLICATION.Services
 {
     public class PostActionsService : IPostActionsService
     {

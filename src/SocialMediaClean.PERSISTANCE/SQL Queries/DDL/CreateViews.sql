@@ -52,3 +52,11 @@ LEFT JOIN Pictures pi
 ON po.ID  =pi.PostID
 LEFT JOIN Videos v
 ON v.PostID = po.ID
+
+CREATE OR ALTER VIEW PostComments
+AS
+SELECT c.ID AS CommentID,c.PostID,c.AuthorID,c.Body,c.CreatedAt,c.ParentID,
+u.FirstName + ' ' + u.LastName AS AuthorName,u.ProfilePictureURL
+FROM Comments c
+INNER JOIN Users u
+ON c.AuthorID = u.ID

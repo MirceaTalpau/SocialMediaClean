@@ -1,6 +1,6 @@
 USE [SocialMediaClean]
 GO
-/****** Object:  StoredProcedure [dbo].[usp_Comment_Add_Comment]    Script Date: 4/27/2024 10:12:00 PM ******/
+/****** Object:  StoredProcedure [dbo].[usp_Comment_Add_Comment]    Script Date: 4/30/2024 1:51:27 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -9,10 +9,12 @@ ALTER   PROCEDURE [dbo].[usp_Comment_Add_Comment]
 @PostID INT,
 @AuthorID INT,
 @ParentID INT = null,
-@Body NVARCHAR(MAX)
+@Body NVARCHAR(MAX),
+@InsertedID INT OUTPUT
 AS
 BEGIN
 	INSERT INTO Comments(PostID,AuthorID,ParentID,Body)
 	VALUES(@PostID,@AuthorID,@ParentID,@Body)
-END
+	SET @InsertedID = SCOPE_IDENTITY();
 
+END

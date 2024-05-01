@@ -1,9 +1,12 @@
 ﻿using LinkedFit.DOMAIN.Models.DTOs.Comments;
+using LinkedFit.DOMAIN.Models.Views.Comments;
 
-namespace LinkedFit.APPLICATION.Contracts
+namespace LinkedFit.APPLICATION.Services
 {
     public interface ICommentsService
     {
-        Task CreateCommentAsync(AddCommentDTO comment);
+        Task<CommentView> CreateCommentAsync(AddCommentDTO comment);
+        Task DeleteCommentAsync(int commentID);
+        Task<IEnumerable<CommentView>> GetCommentsAsync(int postID);
     }
 }
