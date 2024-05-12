@@ -37,5 +37,28 @@ namespace LinkedFit.PERSISTANCE.Repositories
             }
         }
 
+        public async Task SharePostAsync(int postId,int userId)
+        {
+            using (var conn = await _db.CreateDbConnectionAsync())
+            {
+                using (var transaction = conn.BeginTransaction())
+                {
+                    try
+                    {
+                        var parameters = new DynamicParameters();
+                        parameters.Add("@PostID", postId);
+                        parameters.Add("@UserID", userId);
+                        await conn.QueryAsync("usp_Post_Share", parameters, transaction, commandType: System.Data.CommandType.StoredProcedure);
+                        transaction.Commit();
+                    }
+                    catch (Exception)
+                    {
+                        transaction.Rollback();
+                        throw;
+                    }
+                }
+            }
+        }
+
     }
 }
