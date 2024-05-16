@@ -47,7 +47,9 @@ namespace LinkedFit.API.Controllers
         {
             try
             {
-                var posts = await _feedService.GetAllRecipePosts();
+                string token = Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+                var userId = JwtHelper.GetUserIdFromToken(token);
+                var posts = await _feedService.GetAllRecipePosts(userId);
                 return Ok(posts);
             }
             catch (Exception ex)
@@ -61,7 +63,9 @@ namespace LinkedFit.API.Controllers
         {
             try
             {
-                var posts = await _feedService.GetAllPublicProgressPosts();
+                string token = Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+                var userId = JwtHelper.GetUserIdFromToken(token);
+                var posts = await _feedService.GetAllPublicProgressPosts(userId);
                 return Ok(posts);
             }
             catch (Exception ex)

@@ -26,5 +26,10 @@ namespace LinkedFit.DOMAIN.Models.Views
         public int Protein { get; set; } = default!;
         public IEnumerable<Ingredient> Ingredients { get; set;} = default!;
         public IEnumerable<MediaPostView> Media { get; set; } = default!;
+
+        public int LikesCount { get; set; }
+        public int CommentsCount { get; set; }
+        public int SharesCount { get; set; }
+        public bool CurrentUserLiked { get; set; }
     }
 }

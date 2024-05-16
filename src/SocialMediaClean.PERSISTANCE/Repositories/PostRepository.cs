@@ -4,6 +4,7 @@ using LinkedFit.DOMAIN.Models.Entities.Posts;
 using LinkedFit.DOMAIN.Models.Views;
 using LinkedFit.PERSISTANCE.Interfaces;
 using Microsoft.VisualBasic;
+using SocialMediaClean.DOMAIN.Models.Entities;
 using SocialMediaClean.INFRASTRUCTURE.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -346,13 +347,15 @@ namespace LinkedFit.PERSISTANCE.Repositories
                 }
             }
         }
-        public async Task<IEnumerable<RecipePostView>> GetAllRecipePostsAsync()
+        public async Task<IEnumerable<RecipePostView>> GetAllRecipePostsAsync(int userId)
         {
             using (var conn = await _db.CreateDbConnectionAsync())
             {
                 try
                 {
-                    IEnumerable<RecipePostView> posts = await conn.QueryAsync<RecipePostView>(GET_ALL_RECIPE_POSTS, commandType: CommandType.StoredProcedure);
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@CurrentUserID", userId);
+                    IEnumerable<RecipePostView> posts = await conn.QueryAsync<RecipePostView>(GET_ALL_RECIPE_POSTS,parameters, commandType: CommandType.StoredProcedure);
                     if (posts == null)
                     {
                         throw new Exception();
@@ -387,13 +390,15 @@ namespace LinkedFit.PERSISTANCE.Repositories
                 }
             }
         }
-        public async Task<IEnumerable<ProgressPostView>> GetPublicProgressPostsAsync()
+        public async Task<IEnumerable<ProgressPostView>> GetPublicProgressPostsAsync(int userId)
         {
             using (var conn = await _db.CreateDbConnectionAsync())
             {
                 try
                 {
-                    IEnumerable<ProgressPostView> posts = await conn.QueryAsync<ProgressPostView>(GET_PUBLIC_PROGRESS_POSTS, commandType: CommandType.StoredProcedure);
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@CurrentUserID", userId);
+                    IEnumerable<ProgressPostView> posts = await conn.QueryAsync<ProgressPostView>(GET_PUBLIC_PROGRESS_POSTS,parameters, commandType: CommandType.StoredProcedure);
                     if (posts == null)
                     {
                         throw new Exception();

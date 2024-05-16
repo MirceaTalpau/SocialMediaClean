@@ -1,36 +1,109 @@
 CREATE OR ALTER VIEW RecipePost 
 AS
-SELECT p.ID AS PostID,p.AuthorID,r.ID AS RecipeID,p.StatusID,p.GroupID,
-p.SharedByID,us.FirstName + ' ' + us.LastName as SharedBy,p.Body,p.CreatedAt,
-u.FirstName + ' ' + u.LastName AS AuthorName,u.ProfilePictureURL AS AuthorProfilePictureURL,
-r.Name AS RecipeName,r.Description,r.Instructions,r.CookingTime,
-r.Servings,r.Calories,r.Protein,r.Carbs,r.Fat
-FROM Posts p
-INNER JOIN Recipe r
-ON p.ID = r.PostID
-INNER JOIN Users u
-ON p.AuthorID = u.ID
-INNER JOIN Users us
-ON p.AuthorID = us.ID
-INNER JOIN Statuses s 
-ON p.StatusID = s.ID
-WHERE s.Status = 'Public'
-
+WITH LikeCounts AS (
+    SELECT PostID, COUNT(*) AS LikesCount
+    FROM Post_Likes
+    GROUP BY PostID
+),
+CommentCounts AS (
+    SELECT PostID, COUNT(*) AS CommentsCount
+    FROM Comments
+    GROUP BY PostID
+),
+ShareCounts AS (
+    SELECT PostID, COUNT(*) AS SharesCount
+    FROM Post_Shares
+    GROUP BY PostID
+)
+SELECT 
+    p.ID AS PostID,
+    p.AuthorID,
+    r.ID AS RecipeID,
+    p.StatusID,
+    p.GroupID,
+    p.SharedByID,
+    us.FirstName + ' ' + us.LastName as SharedBy,
+    p.Body,
+    p.CreatedAt,
+    u.FirstName + ' ' + u.LastName AS AuthorName,
+    u.ProfilePictureURL AS AuthorProfilePictureURL,
+    r.Name AS RecipeName,
+    r.Description,
+    r.Instructions,
+    r.CookingTime,
+    r.Servings,
+    r.Calories,
+    r.Protein,
+    r.Carbs,
+    r.Fat,
+    ISNULL(lc.LikesCount, 0) AS LikesCount,
+    ISNULL(cc.CommentsCount, 0) AS CommentsCount,
+    ISNULL(sc.SharesCount, 0) AS SharesCount
+FROM 
+    Posts p
+INNER JOIN 
+    Recipe r ON p.ID = r.PostID
+INNER JOIN 
+    Users u ON p.AuthorID = u.ID
+LEFT JOIN 
+    Users us ON p.SharedByID = us.ID
+INNER JOIN 
+    Statuses s ON p.StatusID = s.ID
+LEFT JOIN 
+    LikeCounts lc ON p.ID = lc.PostID
+LEFT JOIN 
+    CommentCounts cc ON p.ID = cc.PostID
+LEFT JOIN 
+    ShareCounts sc ON p.ID = sc.PostID
+WHERE 
+    s.Status = 'Public';
 
 
 CREATE OR ALTER VIEW NormalPost
 AS
-SELECT p.ID AS PostID,p.AuthorID,p.StatusID,p.GroupID,p.SharedByID,p.Body,p.CreatedAt,
-u.FirstName + ' ' + u.LastName AS AuthorName, u.ProfilePictureURL, COUNT(l.PostID) AS LikesCount
-FROM Posts p
-INNER JOIN Users u
-ON p.AuthorID = u.ID
-INNER JOIN Statuses s
-ON p.StatusID = s.ID
-INNER JOIN Post_Likes l
-ON p.ID = l.PostID
-GROUP BY p.ID,p.AuthorID,p.StatusID,p.GroupID,p.SharedByID,p.Body,p.CreatedAt,u.FirstName,u.LastName,u.ProfilePictureURL
-WHERE s.Status = 'Public'
+WITH LikeCounts AS (
+    SELECT PostID, COUNT(*) AS LikesCount
+    FROM Post_Likes
+    GROUP BY PostID
+),
+CommentCounts AS (
+    SELECT PostID, COUNT(*) AS CommentsCount
+    FROM Comments
+    GROUP BY PostID
+),
+ShareCounts AS (
+    SELECT PostID, COUNT(*) AS SharesCount
+    FROM Post_Shares
+    GROUP BY PostID
+)
+SELECT 
+    p.ID AS PostID,
+    p.AuthorID,
+    p.StatusID,
+    p.GroupID,
+    p.SharedByID,
+    p.Body,
+    p.CreatedAt,
+    u.FirstName + ' ' + u.LastName AS AuthorName,
+    u.ProfilePictureURL,
+    ISNULL(lc.LikesCount, 0) AS LikesCount,
+    ISNULL(cc.CommentsCount, 0) AS CommentsCount,
+    ISNULL(sc.SharesCount, 0) AS SharesCount
+FROM 
+    Posts p
+INNER JOIN 
+    Users u ON p.AuthorID = u.ID
+INNER JOIN 
+    Statuses s ON p.StatusID = s.ID
+LEFT JOIN 
+    LikeCounts lc ON p.ID = lc.PostID
+LEFT JOIN 
+    CommentCounts cc ON p.ID = cc.PostID
+LEFT JOIN 
+    ShareCounts sc ON p.ID = sc.PostID
+WHERE 
+    NOT EXISTS (SELECT 1 FROM Recipe r WHERE r.PostID = p.ID)
+    AND NOT EXISTS (SELECT 1 FROM Progress pr WHERE pr.PostID = p.ID);
 
 CREATE VIEW ProgressPost
 AS
@@ -42,6 +115,14 @@ INNER JOIN Progress pr
 ON p.ID = pr.PostID
 INNER JOIN Users u
 ON u.ID = p.AuthorID
+INNER JOIN 
+    Statuses s ON p.StatusID = s.ID
+LEFT JOIN 
+    LikeCounts lc ON p.ID = lc.PostID
+LEFT JOIN 
+    CommentCounts cc ON p.ID = cc.PostID
+LEFT JOIN 
+    ShareCounts sc ON p.ID = sc.PostID
 
 
 CREATE OR ALTER VIEW MediaPost

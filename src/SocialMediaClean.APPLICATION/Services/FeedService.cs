@@ -32,11 +32,11 @@ namespace LinkedFit.APPLICATION.Services
                 throw;
             }
         }
-        public async Task<IEnumerable<RecipePostView>> GetAllRecipePosts()
+        public async Task<IEnumerable<RecipePostView>> GetAllRecipePosts(int userId)
         {
             try
             {
-                IEnumerable<RecipePostView> posts = await _postRepository.GetAllRecipePostsAsync();
+                IEnumerable<RecipePostView> posts = await _postRepository.GetAllRecipePostsAsync(userId);
                 foreach (RecipePostView post in posts)
                 {
                     post.Media = await _postRepository.GetMediaPostAsync(post.PostID);
@@ -51,11 +51,11 @@ namespace LinkedFit.APPLICATION.Services
             }
         }
 
-        public async Task<IEnumerable<ProgressPostView>> GetAllPublicProgressPosts()
+        public async Task<IEnumerable<ProgressPostView>> GetAllPublicProgressPosts(int userId)
         {
             try
             {
-                IEnumerable<ProgressPostView> posts = await _postRepository.GetPublicProgressPostsAsync();
+                IEnumerable<ProgressPostView> posts = await _postRepository.GetPublicProgressPostsAsync(userId);
                 foreach (ProgressPostView post in posts)
                 {
                     List<MediaPostView> medias = new List<MediaPostView>();

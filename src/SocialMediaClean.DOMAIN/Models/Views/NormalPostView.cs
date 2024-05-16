@@ -15,6 +15,8 @@
         public string SharedByProfilePictureURL { get; set; }
         public IEnumerable<MediaPostView> Media { get; set; }
         public int LikesCount { get; set; }
+        public int CommentsCount { get; set; }
+        public int SharesCount { get; set; }
         public bool CurrentUserLiked { get; set; }
     }
 }

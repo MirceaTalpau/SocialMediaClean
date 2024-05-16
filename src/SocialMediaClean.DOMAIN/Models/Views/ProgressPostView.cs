@@ -19,5 +19,9 @@
         public string ProfilePictureURL { get; set; } = default!;
         public string AuthorName { get; set; } = default!;
         public IEnumerable<MediaPostView> Media { get; set; } = default!;
+        public int LikesCount { get; set; }
+        public int CommentsCount { get; set; }
+        public int SharesCount { get; set; }
+        public bool CurrentUserLiked { get; set; }
     }
 }
