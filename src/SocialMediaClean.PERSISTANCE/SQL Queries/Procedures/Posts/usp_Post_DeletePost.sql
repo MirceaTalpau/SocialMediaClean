@@ -14,9 +14,12 @@ BEGIN
 	END
 
 	-- Delete other associated data
+	DELETE FROM Post_Likes WHERE PostID = @PostID;
 	DELETE FROM Pictures WHERE PostID = @PostID;
 	DELETE FROM Videos WHERE PostID = @PostID;
 	DELETE FROM Recipe WHERE PostID = @PostID;
 	DELETE FROM Progress WHERE PostID = @PostID;
 	DELETE FROM Posts WHERE ID = @PostID;
+	DELETE FROM Post_Shares WHERE PostID = @PostID;
+	DELETE FROM Comments WHERE PostID = @PostID;
 END

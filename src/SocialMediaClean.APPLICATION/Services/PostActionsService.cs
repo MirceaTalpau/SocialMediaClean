@@ -1,5 +1,6 @@
 ﻿using LinkedFit.APPLICATION.Contracts;
 using LinkedFit.DOMAIN.Models.DTOs.PostActions;
+using LinkedFit.PERSISTANCE.Interfaces;
 using LinkedFit.PERSISTANCE.Repositories;
 
 namespace LinkedFit.APPLICATION.Services
@@ -22,6 +23,11 @@ namespace LinkedFit.APPLICATION.Services
             {
                 throw;
             }
+        }
+
+        public async Task SharePostAsync(PostShareDTO share)
+        {
+            await _postActionsRepository.SharePostAsync(share);
         }
         
     }

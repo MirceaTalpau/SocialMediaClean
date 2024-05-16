@@ -3,7 +3,8 @@ CREATE OR ALTER PROCEDURE usp_Post_Share
 	@UserID INT
 	AS
 	BEGIN
-	INSERT INTO Post_Shares (PostID, UserID)
-		VALUES (@PostID, @UserID)
+	IF NOT EXISTS (SELECT * FROM Post_Shares WHERE PostID = @PostID AND UserID = @UserID)
+		INSERT INTO Post_Shares (PostID, UserID)
+			VALUES (@PostID, @UserID)
 	END
 	

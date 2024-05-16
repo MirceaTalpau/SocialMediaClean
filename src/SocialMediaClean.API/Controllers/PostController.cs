@@ -107,6 +107,20 @@ namespace LinkedFit.API.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
+        [HttpPost("share")]
+        public async Task<IActionResult> AddShareAsync([FromBody] PostShareDTO share)
+        {
+            try
+            {
+                await _postActionsService.SharePostAsync(share);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
   
     }
 }

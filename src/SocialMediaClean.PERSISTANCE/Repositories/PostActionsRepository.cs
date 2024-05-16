@@ -9,6 +9,7 @@ namespace LinkedFit.PERSISTANCE.Repositories
     {
         private readonly IDbConnectionFactory _db;
         private readonly string POST_ADD_LIKE = "usp_Post_AddLike";
+        private readonly string POST_SHARE = "usp_Post_Share";
         public PostActionsRepository(IDbConnectionFactory db)
         {
             _db = db;
@@ -37,7 +38,7 @@ namespace LinkedFit.PERSISTANCE.Repositories
             }
         }
 
-        public async Task SharePostAsync(int postId,int userId)
+        public async Task SharePostAsync(PostShareDTO share)
         {
             using (var conn = await _db.CreateDbConnectionAsync())
             {
@@ -46,9 +47,9 @@ namespace LinkedFit.PERSISTANCE.Repositories
                     try
                     {
                         var parameters = new DynamicParameters();
-                        parameters.Add("@PostID", postId);
-                        parameters.Add("@UserID", userId);
-                        await conn.QueryAsync("usp_Post_Share", parameters, transaction, commandType: System.Data.CommandType.StoredProcedure);
+                        parameters.Add("@PostID", share.PostID);
+                        parameters.Add("@UserID", share.UserID);
+                        await conn.QueryAsync(POST_SHARE, parameters, transaction, commandType: System.Data.CommandType.StoredProcedure);
                         transaction.Commit();
                     }
                     catch (Exception)
