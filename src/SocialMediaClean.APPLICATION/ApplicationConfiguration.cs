@@ -40,6 +40,9 @@ namespace SocialMediaClean.APPLICATION
             ////////////////COMMENTS/////////////////////
             services.AddScoped<ICommentsService, CommentsService>();
 
+            ////////////////FRIENDS/////////////////////
+            services.AddScoped<IFriendsService, FriendsService>();
+
             return services;
 
         }
