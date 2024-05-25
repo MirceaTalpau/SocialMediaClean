@@ -53,5 +53,76 @@ namespace LinkedFit.PERSISTANCE.Repositories
 
             }
         }
+        public async Task<IEnumerable<Friend>> GetMyFriends(int userID)
+        {
+            using (var conn = await _db.CreateDbConnectionAsync())
+            {
+                try
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@UserID", userID);
+                    var friends = await conn.QueryAsync<Friend>("usp_Friends_GetMyFriends", parameters, commandType: CommandType.StoredProcedure);
+                    return friends;
+                }
+                catch (Exception)
+                {
+                    throw;
+                }
+
+            }
+        }
+        public async Task<IEnumerable<Friend>> GetMyFriendRequests(int userID)
+        {
+            using (var conn = await _db.CreateDbConnectionAsync())
+            {
+                try
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@UserID", userID);
+                    var friends = await conn.QueryAsync<Friend>("usp_Friends_GetMyFriendRequests", parameters, commandType: CommandType.StoredProcedure);
+                    return friends;
+                }
+                catch (Exception)
+                {
+                    throw;
+                }
+
+            }
+        }
+        public async Task DeleteFriendRequest(FriendRequestDTO payload)
+        {
+            using (var conn = await _db.CreateDbConnectionAsync())
+            {
+                try
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@SenderID", payload.SenderID);
+                    parameters.Add("@ReceiverID", payload.ReceiverID);
+                    await conn.QueryAsync("usp_Friends_DeleteFriendRequest", parameters, commandType: CommandType.StoredProcedure);
+                }
+                catch (Exception)
+                {
+                    throw;
+                }
+            }
+        }
+
+        public async Task DeleteFried(FriendRequestDTO payload)
+        {
+            using (var conn = await _db.CreateDbConnectionAsync())
+            {
+                try
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@SenderID", payload.SenderID);
+                    parameters.Add("@ReceiverID", payload.ReceiverID);
+                    await conn.QueryAsync("usp_Friends_DeleteFriend", parameters, commandType: CommandType.StoredProcedure);
+                }
+                catch (Exception)
+                {
+                    throw;
+                }
+            }
+        }
     }
 }

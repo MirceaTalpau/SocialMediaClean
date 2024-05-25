@@ -6,5 +6,9 @@ namespace LinkedFit.APPLICATION.Contracts
     {
         Task SendFriendRequest(FriendRequestDTO payload);
         Task AcceptFriendRequest(FriendRequestDTO payload);
+        Task<IEnumerable<Friend>> GetMyFriendsAsync(int userID);
+        Task<IEnumerable<Friend>> GetMyFriendRequests(int userID);
+        Task RemoveFriendRequest(FriendRequestDTO payload);
+        Task RemoveFriend(FriendRequestDTO payload);
     }
 }

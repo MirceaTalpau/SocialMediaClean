@@ -85,7 +85,7 @@ SELECT
     p.Body,
     p.CreatedAt,
     u.FirstName + ' ' + u.LastName AS AuthorName,
-    u.ProfilePictureURL,
+    u.ProfilePictureURL AS AuthorProfilePictureURL,
     ISNULL(lc.LikesCount, 0) AS LikesCount,
     ISNULL(cc.CommentsCount, 0) AS CommentsCount,
     ISNULL(sc.SharesCount, 0) AS SharesCount
