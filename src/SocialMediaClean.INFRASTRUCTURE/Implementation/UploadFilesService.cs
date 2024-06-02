@@ -139,8 +139,8 @@ namespace LinkedFit.INFRASTRUCTURE.Implementation
                     var fileExtension = Path.GetExtension(file.VideoFile.FileName);
                     var timestamp = DateTime.Now.ToString("yyyyMMddHHmmss");
                     var newFileName = $"{fileName}_{timestamp}{fileExtension}";
-                    var filePath = Path.Combine(@"C:\Storage\Videos", newFileName);
-                    var compressedFilePath = Path.Combine(@"C:\Storage\Videos", "compressed_" + newFileName);
+                    var filePath = Path.Combine(@"C:\_Work\Frontend\LinkedFit\src\assets\videos", newFileName);
+                    var compressedFilePath = Path.Combine(@"C:\_Work\Frontend\LinkedFit\src\assets\videos", "compressed_" + newFileName);
 
                     using (var fileStream = new FileStream(filePath, FileMode.Create))
                     {
@@ -162,7 +162,7 @@ namespace LinkedFit.INFRASTRUCTURE.Implementation
                     int fileIncrement = 1;
                     while (File.Exists(compressedFilePath))
                     {
-                        compressedFilePath = Path.Combine(@"C:\Storage\Videos", $"compressed_{fileName}_{timestamp}_{fileIncrement}{fileExtension}");
+                        compressedFilePath = Path.Combine(@"C:\_Work\Frontend\LinkedFit\src\assets\videos", $"compressed_{fileName}_{timestamp}_{fileIncrement}{fileExtension}");
                         fileIncrement++;
                     }
 

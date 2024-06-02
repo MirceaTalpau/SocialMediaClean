@@ -43,6 +43,9 @@ namespace SocialMediaClean.APPLICATION
             ////////////////FRIENDS/////////////////////
             services.AddScoped<IFriendsService, FriendsService>();
 
+            ////////////////CHAT/////////////////////
+            services.AddScoped<IChatService, ChatService>();
+
             return services;
 
         }
