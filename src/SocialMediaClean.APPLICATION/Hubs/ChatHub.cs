@@ -8,7 +8,7 @@ namespace LinkedFit.APPLICATION.Hubs
         public async Task SendMessage(ChatDTO chat)
         {
 
-            await Clients.Group(chat.ChatID.ToString()).SendAsync("ReceiveMessage", chat);
+            await Clients.Group(chat.ChatID).SendAsync("ReceiveMessage", chat);
         }
 
         public string GetConnectionId()
@@ -17,11 +17,11 @@ namespace LinkedFit.APPLICATION.Hubs
         }
         
 
-        public async Task JoinConversation(int chatID)
+        public async Task JoinConversation(string chatID)
         {
-            await Groups.AddToGroupAsync(Context.ConnectionId, chatID.ToString());
+            await Groups.AddToGroupAsync(Context.ConnectionId, chatID);
         }
-        public async Task LeaveConversation(int chatID)
+        public async Task LeaveConversation(string chatID)
         {
             await Groups.RemoveFromGroupAsync(Context.ConnectionId, chatID.ToString());
         }
