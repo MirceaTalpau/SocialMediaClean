@@ -1,4 +1,5 @@
 ﻿using LinkedFit.APPLICATION.Contracts;
+using LinkedFit.DOMAIN.Models.DTOs.Chat;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -31,5 +32,55 @@ namespace LinkedFit.API.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, "Error in GetChatIdByUserIDAsync");
             }
         }
+
+        [HttpPost]
+        public async Task<IActionResult> StoreChatMessage([FromBody] ChatDTO chat)
+        {
+            try
+            {
+                _logger.LogInformation($"StoreChatMessage called, Chat: {chat}");
+                await _chatService.StoreChatMessage(chat);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error in StoreChatMessage");
+                return StatusCode(StatusCodes.Status500InternalServerError, "Error in StoreChatMessage");
+            }
+        }
+
+        [HttpGet("{chatId}")]
+        public async Task<IActionResult> GetChatsAsync(int chatId)
+        {
+            try
+            {
+                _logger.LogInformation($"GetChatsAsync called, UserId: {chatId}");
+                var chats = await _chatService.GetChatsAsync(chatId);
+                return Ok(chats);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error in GetChatsAsync");
+                return StatusCode(StatusCodes.Status500InternalServerError, "Error in GetChatsAsync");
+            }
+        }
+
+        [HttpGet("user/{userId}")]
+        public async Task<IActionResult> GetChatListDTOs(int userId)
+        {
+            try
+            {
+                _logger.LogInformation($"GetChatListDTOs called, UserId: {userId}");
+                var chatListDTOs = await _chatService.GetChatListDTOs(userId);
+                return Ok(chatListDTOs);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error in GetChatListDTOs");
+                return StatusCode(StatusCodes.Status500InternalServerError, "Error in GetChatListDTOs");
+            }
+        }
+
+
     }
 }

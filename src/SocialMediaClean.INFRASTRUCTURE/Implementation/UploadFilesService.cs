@@ -147,6 +147,14 @@ namespace LinkedFit.INFRASTRUCTURE.Implementation
                         await file.VideoFile.CopyToAsync(fileStream);
                     }
 
+                    // Check if compressed file already exists and increment filename
+                    int fileIncrement = 1;
+                    while (File.Exists(compressedFilePath))
+                    {
+                        compressedFilePath = Path.Combine(@"C:\_Work\Frontend\LinkedFit\src\assets\videos", $"compressed_{fileName}_{timestamp}_{fileIncrement}{fileExtension}");
+                        fileIncrement++;
+                    }
+
                     FFmpeg.SetExecutablesPath(@"C:\Program Files\ffmpeg\bin");
                     var info = await FFmpeg.GetMediaInfo(filePath);
                     var videoStream = info.VideoStreams.First()
@@ -158,13 +166,7 @@ namespace LinkedFit.INFRASTRUCTURE.Implementation
                         .SetOutput(compressedFilePath)
                         .Start();
 
-                    // Check if compressed file already exists and increment filename
-                    int fileIncrement = 1;
-                    while (File.Exists(compressedFilePath))
-                    {
-                        compressedFilePath = Path.Combine(@"C:\_Work\Frontend\LinkedFit\src\assets\videos", $"compressed_{fileName}_{timestamp}_{fileIncrement}{fileExtension}");
-                        fileIncrement++;
-                    }
+                    
 
                     Videos video = new Videos
                     {
