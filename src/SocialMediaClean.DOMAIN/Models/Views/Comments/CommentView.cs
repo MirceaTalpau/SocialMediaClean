@@ -9,6 +9,6 @@
         public string Body { get; set; }
         public DateTime CreatedAt { get; set; }
         public string AuthorName { get; set; }
-        public string AuthorProfilePictureURL { get; set; }
+        public string ProfilePictureURL { get; set; }
     }
 }
