@@ -17,6 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="SQL Queries\DDL\NewFolder\" />
     <Folder Include="SQL Queries\Procedures\Chats\" />
     <Folder Include="SQL Queries\Procedures\Users\" />
   </ItemGroup>

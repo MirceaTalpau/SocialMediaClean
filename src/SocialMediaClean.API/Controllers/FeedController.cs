@@ -41,6 +41,22 @@ namespace LinkedFit.API.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, "Error retrieving data from the database");
             }
         }
+        [HttpGet("normal/friends")]
+        public async Task<IActionResult> GetMyFriendsNormalPosts()
+        {
+            try
+            {
+                string token = Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+                var userId = JwtHelper.GetUserIdFromToken(token);
+                var posts = await _feedService.GetMyFriendsNormalPosts(userId);
+                return Ok(posts);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, "Error retrieving data from the database");
+            }
+        }
 
         [HttpGet("recipe")]
         public async Task<IActionResult> GetAllPublicRecipeFeed()
@@ -50,6 +66,23 @@ namespace LinkedFit.API.Controllers
                 string token = Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
                 var userId = JwtHelper.GetUserIdFromToken(token);
                 var posts = await _feedService.GetAllRecipePosts(userId);
+                return Ok(posts);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, "Error retrieving data from the database");
+            }
+        }
+
+        [HttpGet("recipe/friends")]
+        public async Task<IActionResult> GetMyFriendsRecipePosts()
+        {
+            try
+            {
+                string token = Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+                var userId = JwtHelper.GetUserIdFromToken(token);
+                var posts = await _feedService.GetMyFriendsRecipePosts(userId);
                 return Ok(posts);
             }
             catch (Exception ex)

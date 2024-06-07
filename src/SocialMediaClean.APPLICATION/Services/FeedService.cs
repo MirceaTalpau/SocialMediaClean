@@ -3,16 +3,100 @@ using LinkedFit.APPLICATION.Contracts;
 using LinkedFit.DOMAIN.Models.Entities.Posts;
 using LinkedFit.DOMAIN.Models.Views;
 using LinkedFit.PERSISTANCE.Interfaces;
+using System.Linq;
 
 namespace LinkedFit.APPLICATION.Services
 {
     public class FeedService : IFeedService
     {
         private readonly IPostRepository _postRepository;
+        private readonly IFeedRepository _feedRepository;
 
-        public FeedService(IPostRepository postRepository)
+        public FeedService(IPostRepository postRepository, IFeedRepository feedRepository)
         {
             _postRepository = postRepository;
+            _feedRepository = feedRepository;
+        }
+
+        public async Task<IEnumerable<NormalPostView>> GetMyFriendsNormalPosts(int userId)
+        {
+            try
+            {
+                var posts = await _feedRepository.GetMyFriendsPosts(userId);
+                posts = posts.OrderByDescending(post => post.CreatedAt)
+                    .ThenByDescending(post => post.SharedAt)
+                    .ToList();
+
+                foreach (NormalPostView post in posts)
+                {
+                    post.Media = await _postRepository.GetMediaPostAsync(post.PostID);
+                    post.Media.ToList().Sort(new MediaPostComparer());
+                }
+                return posts;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task<IEnumerable<RecipePostView>> GetMyFriendsRecipePosts(int userId)
+        {
+            try
+            {
+                var posts = await _feedRepository.GetMyFriendsRecipePost(userId);
+                posts = posts.OrderByDescending(post => post.CreatedAt)
+                    .ThenByDescending(post => post.SharedAt)
+                    .ToList();
+                foreach (RecipePostView post in posts)
+                {
+                    post.Media = await _postRepository.GetMediaPostAsync(post.PostID);
+                    post.Ingredients = await _postRepository.GetIngredientsAsync(post.RecipeID);
+                    post.Media.ToList().Sort(new MediaPostComparer());
+                }
+                return posts;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task<IEnumerable<ProgressPostView>> GetMyFriendsProgressPosts(int userId)
+        {
+            try
+            {
+                var posts = await _feedRepository.GetMyFriendsProgressPost(userId);
+                posts = posts.OrderByDescending(post => post.CreatedAt)
+                    .ThenByDescending(post => post.SharedAt)
+                    .ToList();
+                foreach (ProgressPostView post in posts)
+                {
+                    List<MediaPostView> medias = new List<MediaPostView>();
+                    var before = new MediaPostView
+                    {
+                        PostID = post.PostID,
+                        PictureCreatedAt = post.BeforeDate,
+                        PictureURI = post.BeforePictureURI,
+                        Caption = post.BeforeWeight.ToString()
+                    };
+                    var after = new MediaPostView
+                    {
+                        PostID = post.PostID,
+                        PictureCreatedAt = post.AfterDate,
+                        PictureURI = post.AfterPictureURI,
+                        Caption = post.AfterWeight.ToString()
+                    };
+                    medias.Add(before);
+                    medias.Add(after);
+                    post.Media = medias;
+                }
+                return posts;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
         public async Task<IEnumerable<NormalPostView>> GetAllPublicNormalPosts(int userId)
         {

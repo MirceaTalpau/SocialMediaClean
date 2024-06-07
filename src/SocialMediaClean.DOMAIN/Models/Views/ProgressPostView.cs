@@ -8,6 +8,8 @@
         public int StatusID { get; set; } = default!;
         public int GroupID { get; set; } = default!;
         public int SharedByID { get; set; } = default!;
+        public string SharedByName { get; set; } = default!;
+        public DateTime SharedAt { get; set; } = default!;
         public string Body { get; set; } 
         public DateTime CreatedAt { get; set; } =default!;
         public double BeforeWeight { get; set; } = default!;

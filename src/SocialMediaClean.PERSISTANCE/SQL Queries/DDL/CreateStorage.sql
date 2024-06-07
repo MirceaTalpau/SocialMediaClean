@@ -159,5 +159,25 @@ Body NVARCHAR(MAX) NOT NULL,
 CreatedAt DATETIME DEFAULT GETDATE(),
 );
 
+-- Create the Groups table
+CREATE TABLE Groups (
+    ID INT IDENTITY(1,1) PRIMARY KEY,
+    GroupName VARCHAR(100) NOT NULL,
+    Description VARCHAR(500),
+    CreatedBy INT NOT NULL,
+    CreatedDate DATETIME NOT NULL DEFAULT GETDATE()
+);
+
+-- Create the GroupMembers table
+CREATE TABLE GroupMembers (
+    GroupID INT NOT NULL,
+    UserID INT NOT NULL,
+    JoinedDate DATETIME NOT NULL DEFAULT GETDATE(),
+    PRIMARY KEY (GroupID, UserID),
+    FOREIGN KEY (GroupID) REFERENCES Groups(ID),
+    FOREIGN KEY (UserID) REFERENCES Users(ID)
+);
+
+
 
 

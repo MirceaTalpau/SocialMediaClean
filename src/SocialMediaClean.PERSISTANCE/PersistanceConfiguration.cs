@@ -26,6 +26,9 @@ namespace SocialMediaClean.PERSISTANCE
             services.AddScoped<IFriendsRepository, FriendsRepository>();
             ////////CHAT
             services.AddScoped<IChatRepository, ChatRepository>();
+            ///////FEED
+            services.AddScoped<IFeedRepository, FeedRepository>();
+
             return services;
         }
     }

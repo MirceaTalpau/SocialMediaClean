@@ -8,6 +8,8 @@ namespace LinkedFit.APPLICATION.Contracts
         Task<IEnumerable<RecipePostView>> GetAllRecipePosts(int userId);
         Task<IEnumerable<NormalPostView>> GetAllPublicNormalPosts(int userId);
         Task<IEnumerable<ProgressPostView>> GetAllPublicProgressPosts(int userId);
+        Task<IEnumerable<NormalPostView>> GetMyFriendsNormalPosts(int userId);
+        Task<IEnumerable<RecipePostView>> GetMyFriendsRecipePosts(int userId);
 
     }
 }

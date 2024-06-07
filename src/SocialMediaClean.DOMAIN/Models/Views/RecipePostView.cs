@@ -13,6 +13,9 @@ namespace LinkedFit.DOMAIN.Models.Views
         public int RecipeID { get; set; } = default!;
         public int StatusID { get; set; } = default!;
         public int GroupID { get; set; } = default!;
+        public int SharedByID { get; set; } = default!;
+        public string SharedByName { get; set; } = default!;
+        public DateTime SharedAt { get; set; } = default!;
         public string GroupName { get; set; } = default!;
         public string Body { get; set; }
         public string RecipeName { get; set; } = default!;
