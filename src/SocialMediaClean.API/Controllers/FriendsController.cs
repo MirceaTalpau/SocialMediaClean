@@ -113,6 +113,38 @@ namespace LinkedFit.API.Controllers
                 throw;
             }
         }
+        [HttpGet("check-friendship/{userID}/{friendID}")]
+        public async Task<IActionResult> CheckFriendship(int userID, int friendID)
+        {
+            try
+            {
+                _logger.LogInformation("Checking friendship");
+                var friendship = await _friendsService.CheckIfTheyAreFriends(userID, friendID);
+                _logger.LogInformation($"Friendship checked {friendship}",friendship);
+                return Ok(friendship);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error checking friendship {ex.Message}",ex.Message);
+                throw;
+            }
+        }
+        [HttpGet("check-request/{senderID}/{receiverID}")]
+        public async Task<IActionResult> CheckRequest(int senderID, int receiverID)
+        {
+            try
+            {
+                _logger.LogInformation("Checking request");
+                var request = await _friendsService.IsRequestSent(new FriendRequestDTO { SenderID = senderID, ReceiverID = receiverID });
+                _logger.LogInformation($"Request checked {request}",request);
+                return Ok(request);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error checking request {ex.Message}",ex.Message);
+                throw;
+            }
+        }
 
     }
 }

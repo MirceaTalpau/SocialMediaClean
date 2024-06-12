@@ -28,7 +28,10 @@ namespace SocialMediaClean.PERSISTANCE
             services.AddScoped<IChatRepository, ChatRepository>();
             ///////FEED
             services.AddScoped<IFeedRepository, FeedRepository>();
-
+            ///////USER PROFILE
+            services.AddScoped<IUserProfileRepository, UserProfileRepository>();
+            ///////SEARCH
+            services.AddScoped<ISearchRepository, SearchRepository>();
             return services;
         }
     }

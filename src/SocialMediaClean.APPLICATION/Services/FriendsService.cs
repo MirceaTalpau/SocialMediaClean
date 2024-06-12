@@ -11,7 +11,10 @@ namespace LinkedFit.APPLICATION.Services
         {
             _friendsRepository = friendsRepository;
         }
-
+        public async Task<bool> IsRequestSent(FriendRequestDTO payload)
+        {
+            return await _friendsRepository.IsRequestSent(payload);
+        }
         public async Task SendFriendRequest(FriendRequestDTO payload)
         {
             await _friendsRepository.SendFriendRequest(payload);
@@ -35,6 +38,10 @@ namespace LinkedFit.APPLICATION.Services
         public async Task RemoveFriendRequest(FriendRequestDTO payload)
         {
             await _friendsRepository.DeleteFriendRequest(payload);
+        }
+        public async Task<bool> CheckIfTheyAreFriends(int userID, int friendID)
+        {
+            return await _friendsRepository.CheckIfTheyAreFriends(userID, friendID);
         }
     }
 }

@@ -10,5 +10,7 @@ namespace LinkedFit.PERSISTANCE.Interfaces
         Task<IEnumerable<Friend>> GetMyFriendRequests(int userID);
         Task<IEnumerable<Friend>> GetMyFriends(int userID);
         Task SendFriendRequest(FriendRequestDTO payload);
+        Task<bool> CheckIfTheyAreFriends(int userID, int friendID);
+        Task<bool> IsRequestSent(FriendRequestDTO payload);
     }
 }

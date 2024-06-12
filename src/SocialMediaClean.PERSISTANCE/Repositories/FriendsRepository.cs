@@ -17,6 +17,25 @@ namespace LinkedFit.PERSISTANCE.Repositories
             _db = db;
         }
 
+        public async Task<bool> IsRequestSent(FriendRequestDTO payload)
+        {
+            using (var conn = await _db.CreateDbConnectionAsync())
+            {
+                try
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@SenderID", payload.SenderID);
+                    parameters.Add("@ReceiverID", payload.ReceiverID);
+                    var result = await conn.QueryFirstOrDefaultAsync<bool>("usp_Friends_IsRequestSent", parameters, commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+                catch (Exception)
+                {
+                    throw;
+                }
+            }
+        }
+
         public async Task SendFriendRequest(FriendRequestDTO payload)
         {
             using (var conn = await _db.CreateDbConnectionAsync())
@@ -117,6 +136,24 @@ namespace LinkedFit.PERSISTANCE.Repositories
                     parameters.Add("@SenderID", payload.SenderID);
                     parameters.Add("@ReceiverID", payload.ReceiverID);
                     await conn.QueryAsync("usp_Friends_DeleteFriend", parameters, commandType: CommandType.StoredProcedure);
+                }
+                catch (Exception)
+                {
+                    throw;
+                }
+            }
+        }
+        public async Task<bool> CheckIfTheyAreFriends(int userID, int friendID)
+        {
+            using (var conn = await _db.CreateDbConnectionAsync())
+            {
+                try
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@UserID", userID);
+                    parameters.Add("@FriendID", friendID);
+                    var result = await conn.QueryFirstOrDefaultAsync<bool>("usp_Friends_CheckIfTheyAreFriends", parameters, commandType: CommandType.StoredProcedure);
+                    return result;
                 }
                 catch (Exception)
                 {

@@ -45,6 +45,11 @@ namespace SocialMediaClean.APPLICATION
 
             ////////////////CHAT/////////////////////
             services.AddScoped<IChatService, ChatService>();
+            ////////////////USERPROFILE/////////////////////
+            services.AddScoped<IUserProfileService, UserProfileService>();
+
+            ////////////////SEARCH/////////////////////
+            services.AddScoped<ISearchService, SearchService>();
 
             return services;
 
